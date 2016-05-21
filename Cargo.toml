@@ -1,0 +1,30 @@
+
+[package]
+name = "unicode-jp"
+version = "0.1.0"
+authors = ["gemmarx <gemmarx@users.noreply.github.com>"]
+
+[lib]
+name = "kana"
+path = "src/kana.rs"
+
+[[bin]]
+name = "half2full-kana"
+path = "src/half2full-kana.rs"
+
+[[bin]]
+name = "canon10n-jp"
+path = "src/canon10n-jp.rs"
+
+[[bin]]
+name = "normal2wide-ascii"
+path = "src/normal2wide-ascii.rs"
+
+[[bin]]
+name = "wide2normal-ascii"
+path = "src/wide2normal-ascii.rs"
+
+[dependencies]
+maplit = "*"
+regex = "*"
+
