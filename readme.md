@@ -67,10 +67,11 @@ convert all separated Voiced-sound-marks into space+combining style "\u{20}\u{30
 ### Methods of kana::Kana struct:
 - half2full(&self, &str) -> String  
 convert Half-width-kana into normal Katakana with diacritical marks separated  [ｱﾞﾊﾟ -> ア゙パ]  
-simple but tends to cause rendering trouble
+This is simple but tends to cause trouble when rendering.
+In such a case, use half2kana() or execute vsmark2* as post process.
 
 - half2kana(&self, &str) -> String  
-convert Half-width-kana into normal Katakana and combining its diacritical marks  [ｱﾞﾊﾟ -> アﾞパ]
+convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -> アﾞパ]
 
 - combine(&self, &str) -> String  
 combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -> がパ]
