@@ -47,15 +47,15 @@ pub fn wide2ascii(s: &str) -> String {
 }
 
 pub fn ascii2wide(s: &str) -> String {
-    shift_code(|x| 0x20 < x && x < 0x7f, |x| x + 0xfee0, s)
+    shift_code(|x| 0x0020 < x && x < 0x007f, |x| x + 0xfee0, s)
 }
 
 pub fn hira2kata(s: &str) -> String {
-    shift_code(|x| 0x3041 < x && x < 0x3096, |x| x + 0x60, s)
+    shift_code(|x| 0x3041 < x && x < 0x3096, |x| x + 0x0060, s)
 }
 
 pub fn kata2hira(s: &str) -> String {
-    shift_code(|x| 0x30A1 < x && x < 0x30F6, |x| x - 0x60, s)
+    shift_code(|x| 0x30A1 < x && x < 0x30F6, |x| x - 0x0060, s)
 }
 
 pub struct Kana {

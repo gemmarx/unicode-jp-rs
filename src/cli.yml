@@ -1,0 +1,26 @@
+name:   convert
+about:  Converter of Japanese characters got from STDIN
+
+subcommands:
+    - wide2ascii:
+        about:  Convert Wide-alphanumeric into normal ASCII
+    - ascii2wide:
+        about:  Convert normal ASCII characters into Wide-alphanumeric
+    - hira2kata:
+        about:  Convert Hiragana into Katakana
+    - kata2hira:
+        about:  Convert Katakana into Hiragana
+    - vsmark2full:
+        about:  Convert all separated Voiced-sound-marks into full-width style
+    - vsmark2half:
+        about:  Convert all separated Voiced-sound-marks into half-width style
+    - vsmark2combi:
+        about:  Convert all separated Voiced-sound-marks into space+combining style
+    - half2full:
+        about:  Convert Half-width-kana into normal Katakana with diacritical marks separated
+    - half2kana:
+        about:  Convert Half-width-kana into normal Katakana with diacritical marks combined
+    - combine:
+        about:  Combine base characters and diacritical marks on Hiragana/Katakana
+    - nowidespace:
+        about:  Convert Wide-space into normal space
