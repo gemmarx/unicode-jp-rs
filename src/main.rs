@@ -2,44 +2,39 @@
 #[macro_use] extern crate clap;
 extern crate kana;
 
-use clap::App;
-use kana::Kana;
+use std::io::prelude::*;
+use std::{io, process, fs};
+
+macro_rules! err { () => { |e| {
+    writeln!(&mut io::stderr(), "{}", e).unwrap();
+    process::exit(1);
+} };}
 
 fn main() {
     let clis = load_yaml!("cli.yml");
-    let args = App::from_yaml(clis).get_matches();
+    let args = clap::App::from_yaml(clis).get_matches();
 
-    let k = Kana::init();
-    let r = std::io::stdin();
+    let f0 = io::stdin();
+    let r = if args.is_present("INPUT_FILE") {
+        let f = fs::File::open(args.value_of("INPUT_FILE").unwrap()).unwrap_or_else(err![]);
+        Box::new(io::BufReader::new(f)) as Box<BufRead>
+    } else { Box::new(f0.lock()) as Box<BufRead> };
 
-    let buff = &mut String::new();
-    while r.read_line(buff).is_ok() && 0 != buff.len() {
-        if args.is_present("ascii2wide") {
-            print!("{}", kana::ascii2wide(buff));
-        } else if args.is_present("wide2ascii") {
-            print!("{}", kana::wide2ascii(buff));
-        } else if args.is_present("hira2kata") {
-            print!("{}", kana::hira2kata(buff));
-        } else if args.is_present("kata2hira") {
-            print!("{}", kana::kata2hira(buff));
-        } else if args.is_present("combine") {
-            print!("{}", k.combine(buff));
-        } else if args.is_present("half2full") {
-            print!("{}", k.half2full(buff));
-        } else if args.is_present("half2kana") {
-            print!("{}", k.half2kana(buff));
-        } else if args.is_present("vsmark2half") {
-            print!("{}", kana::vsmark2half(buff));
-        } else if args.is_present("vsmark2full") {
-            print!("{}", kana::vsmark2full(buff));
-        } else if args.is_present("vsmark2combi") {
-            print!("{}", kana::vsmark2combi(buff));
-        } else if args.is_present("nowidespace") {
-            print!("{}", buff.replace("\u{3000}", "\u{20}"));
-        } else {
-            print!("{}", buff);
-        }
-        buff.clear();
+    let k = kana::Kana::init();
+    for line in r.lines() {
+        let mut s = line.unwrap();
+        if args.is_present("half2full")    { s = k.half2full(&s); }
+        if args.is_present("half2kana")    { s = k.half2kana(&s); }
+        if args.is_present("combine")      { s = k.combine(&s); }
+        if args.is_present("hira2kata")    { s = kana::hira2kata(&s); }
+        if args.is_present("kata2hira")    { s = kana::kata2hira(&s); }
+        if args.is_present("vsmark2half")  { s = kana::vsmark2half(&s); }
+        if args.is_present("vsmark2full")  { s = kana::vsmark2full(&s); }
+        if args.is_present("vsmark2combi") { s = kana::vsmark2combi(&s); }
+        if args.is_present("ascii2wide")   { s = kana::ascii2wide(&s); }
+        if args.is_present("wide2ascii")   { s = kana::wide2ascii(&s); }
+        if args.is_present("nowidespace")  { s = s.replace("\u{3000}", "\u{20}"); }
+        println!("{}", s);
     }
 }
 

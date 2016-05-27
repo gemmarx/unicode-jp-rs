@@ -12,10 +12,6 @@ path = "src/kana.rs"
 name = "convert"
 path = "src/main.rs"
 
-[[bin]]
-name = "canon10n-jp"
-path = "src/canon10n-jp.rs"
-
 [dependencies]
 maplit = "*"
 regex = "*"

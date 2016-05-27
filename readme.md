@@ -1,4 +1,4 @@
-Unicode-JP
+Unicode-JP (Rust)
 ----
 Converters of characters included in Japanese texts.
 - Half-width-kana[半角ｶﾅ;HANKAKU KANA] -> normal Katakana

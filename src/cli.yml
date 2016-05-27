@@ -1,26 +1,49 @@
 name:   convert
-about:  Converter of Japanese characters got from STDIN
+about:  Convert notations of Japanese text
 
-subcommands:
+args:
+    - INPUT_FILE:
+        help:  File Name
+        index:  1
     - wide2ascii:
-        about:  Convert Wide-alphanumeric into normal ASCII
+        long:  wide2ascii
+        help:  Convert Wide-alphanumeric into normal ASCII
+        conflicts_with:  [ ascii2wide ]
     - ascii2wide:
-        about:  Convert normal ASCII characters into Wide-alphanumeric
+        long:  ascii2wide
+        help:  Convert normal ASCII characters into Wide-alphanumeric
+        conflicts_with:  [ wide2ascii ]
     - hira2kata:
-        about:  Convert Hiragana into Katakana
+        long:  hira2kata
+        help:  Convert Hiragana into Katakana
+        conflicts_with:  [ kata2hira ]
     - kata2hira:
-        about:  Convert Katakana into Hiragana
+        long:  kata2hira
+        help:  Convert Katakana into Hiragana
+        conflicts_with:  [ hira2kata ]
     - vsmark2full:
-        about:  Convert all separated Voiced-sound-marks into full-width style
+        long:  vsmark2full
+        help:  Convert all separated Voiced-sound-marks into full-width style
+        conflicts_with:  [ vsmark2half, vsmark2combi ]
     - vsmark2half:
-        about:  Convert all separated Voiced-sound-marks into half-width style
+        long:  vsmark2half
+        help:  Convert all separated Voiced-sound-marks into half-width style
+        conflicts_with:  [ vsmark2full, vsmark2combi ]
     - vsmark2combi:
-        about:  Convert all separated Voiced-sound-marks into space+combining style
+        long:  vsmark2combi
+        help:  Convert all separated Voiced-sound-marks into space+combining style
+        conflicts_with:  [ vsmark2full, vsmark2half ]
     - half2full:
-        about:  Convert Half-width-kana into normal Katakana with diacritical marks separated
+        long:  half2full
+        help:  Convert Half-width-kana into normal Katakana with diacritical marks separated
+        conflicts_with:  [ half2kana ]
     - half2kana:
-        about:  Convert Half-width-kana into normal Katakana with diacritical marks combined
+        long:  half2kana
+        help:  Convert Half-width-kana into normal Katakana with diacritical marks combined
+        conflicts_with:  [ half2full ]
     - combine:
-        about:  Combine base characters and diacritical marks on Hiragana/Katakana
+        long:  combine
+        help:  Combine base characters and diacritical marks on Hiragana/Katakana
     - nowidespace:
-        about:  Convert Wide-space into normal space
+        long:  nowidespace
+        help:  Convert Wide-space into normal space
