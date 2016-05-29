@@ -2,8 +2,8 @@ name:   convert
 about:  Convert notations of Japanese text
 
 args:
-    - INPUT_FILE:
-        help:  File Name
+    - INPUT:
+        help:  Input File
         index:  1
     - wide2ascii:
         long:  wide2ascii
@@ -47,3 +47,16 @@ args:
     - nowidespace:
         long:  nowidespace
         help:  Convert Wide-space into normal space
+        conflicts_with:  [ space2wide ]
+    - space2wide:
+        long:  space2wide
+        help:  Convert normal space into Wide-space
+        conflicts_with:  [ nowidespace ]
+    - nowideyen:
+        long:  nowideyen
+        help:  Convert Wide-yen into Half-width-yen
+        conflicts_with:  [ yen2wide ]
+    - yen2wide:
+        long:  yen2wide
+        help:  Convert Half-width-yen into Wide-yen
+        conflicts_with:  [ nowideyen ]

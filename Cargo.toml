@@ -9,7 +9,7 @@ name = "kana"
 path = "src/kana.rs"
 
 [[bin]]
-name = "convert"
+name = "converchar-jp"
 path = "src/main.rs"
 
 [dependencies]

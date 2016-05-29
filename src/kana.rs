@@ -334,3 +334,8 @@ pub fn vsmark2combi(s: &str) -> String {
                   &format!("{}{}", CH_SPACE, CH_SEMIVOICED_COMBI), s)
 }
 
+pub fn nowidespace(s: &str) -> String { s.replace("\u{3000}", "\u{20}") }
+pub fn space2wide(s: &str) -> String { s.replace("\u{20}", "\u{3000}") }
+pub fn nowideyen(s: &str) -> String { s.replace("\u{ffe5}", "\u{a5}") }
+pub fn yen2wide(s: &str) -> String { s.replace("\u{a5}", "\u{ffe5}") }
+

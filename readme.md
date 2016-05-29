@@ -1,6 +1,6 @@
 Unicode-JP (Rust)
 ----
-Converters of characters included in Japanese texts.
+Converters of troublesome characters included in Japanese texts.
 - Half-width-kana[半角ｶﾅ;HANKAKU KANA] -> normal Katakana
 - Wide-alphanumeric[全角英数;ZENKAKU EISU] <-> normal ASCII
 
@@ -64,6 +64,18 @@ convert all separated Voiced-sound-marks into half-width style "\u{FF9E}"
 - vsmark2combi(&str) -> String  
 convert all separated Voiced-sound-marks into space+combining style "\u{20}\u{3099}"
 
+- nowidespace(&str) -> String  
+convert Wide-space into normal space    ["　" -> " "]
+
+- space2wide(&str) -> String  
+convert normal space into Wide-space    [" " -> "　"]
+
+- nowideyen(&str) -> String  
+convert Wide-yen into Half-width-yen    ["￥" -> "¥"]
+
+- yen2wide(&str) -> String  
+convert Half-width-yen into Wide-yen    ["¥" -> "￥"]
+
 ### Methods of kana::Kana struct:
 - half2full(&self, &str) -> String  
 convert Half-width-kana into normal Katakana with diacritical marks separated  [ｱﾞﾊﾟ -> ア゙パ]  
@@ -78,5 +90,4 @@ combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜
 
 ## TODO or NOT TODO
 - Half-width-kana <- normal Katakana    # Isn't it need?
-- Wide-space "\u{3000}" <-> normal space "\u{20}"   # Use replace() of std::str.
 

@@ -1,2 +1,2 @@
 #!/bin/sh
-convert $* --half2full --combine --vsmark2combi --wide2ascii --nowidespace
+converchar-jp $* --half2full --combine --vsmark2combi --wide2ascii --nowidespace --nowideyen
