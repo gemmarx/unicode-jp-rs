@@ -1,9 +1,12 @@
 
+#[macro_use] extern crate lazy_static;
 #[macro_use] extern crate clap;
 extern crate kana;
 
-use std::io::prelude::*;
+use std::error::Error;
 use std::{io, process, fs};
+use std::io::prelude::*;
+use clap::ArgMatches;
 use kana::*;
 
 macro_rules! err { ($e:expr) => ( {
@@ -11,27 +14,22 @@ macro_rules! err { ($e:expr) => ( {
     process::exit(1);
 } ) }
 
-macro_rules! get_input_clap { ($args:expr, $stdin:expr) => ( {
-    if $args.is_present("INPUT") {
-        let f = fs::File::open($args.value_of("INPUT").unwrap())
-                .unwrap_or_else(|e|err!(e));
-        Box::new(io::BufReader::new(f)) as Box<BufRead>
-    } else {
-        $stdin = io::stdin();
-        Box::new($stdin.lock()) as Box<BufRead>
-    }
-} ) }
-
 fn main() {
     let _args = load_yaml!("cli.yml");
     let args  = clap::App::from_yaml(_args).get_matches();
 
-    let _input;
-    let input = get_input_clap!(args, _input);
+    match main_body(&args, get_input_clap(&args)) {
+        Ok(_)  => {},
+        Err(e) => err!(e),
+    }
+}
 
+fn main_body(args: &ArgMatches, input: Box<BufRead>)
+    -> Result<(), Box<Error>>
+{
     let k = Kana::init();
     for _s in input.lines() {
-        let mut s = _s.unwrap_or_else(|e|err!(e));
+        let mut s = try!(_s);
         if args.is_present("half2full")    { s = k.half2full(&s); }
         if args.is_present("half2kana")    { s = k.half2kana(&s); }
         if args.is_present("combine")      { s = k.combine(&s); }
@@ -47,6 +45,18 @@ fn main() {
         if args.is_present("nowideyen")    { s = nowideyen(&s); }
         if args.is_present("yen2wide")     { s = yen2wide(&s); }
         println!("{}", s);
+    }
+    Ok(())
+}
+
+fn get_input_clap(args: &ArgMatches) -> Box<BufRead> {
+    if args.is_present("INPUT") {
+        let f = fs::File::open(args.value_of("INPUT").unwrap())
+                .unwrap_or_else(|e|err!(e));
+        Box::new(io::BufReader::new(f)) as Box<BufRead>
+    } else {
+        lazy_static! { static ref STDIN: io::Stdin = io::stdin(); }
+        Box::new(STDIN.lock()) as Box<BufRead>
     }
 }
 

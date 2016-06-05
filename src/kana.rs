@@ -1,5 +1,6 @@
 
 #[macro_use] extern crate maplit;
+#[macro_use] extern crate lazy_static;
 extern crate regex;
 
 use std::char;
@@ -313,10 +314,12 @@ impl Kana { pub fn combine(&self, s0: &str) -> String {
 } }
 
 fn replace_marks(vmark: &str, svmark: &str, src: &str) -> String {
-    let r1 = Regex::new(RE_VOICED_MARKS).unwrap();
-    let r2 = Regex::new(RE_SEMIVOICED_MARKS).unwrap();
-    let s_ = r1.replace_all(src, vmark);
-    r2.replace_all(&s_, svmark)
+    lazy_static! {
+        static ref RE1: Regex = Regex::new(RE_VOICED_MARKS).unwrap();
+        static ref RE2: Regex = Regex::new(RE_SEMIVOICED_MARKS).unwrap();
+    }
+    let s_ = RE1.replace_all(src, vmark);
+    RE2.replace_all(&s_, svmark)
 }
 
 pub fn vsmark2half(s: &str) -> String {

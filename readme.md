@@ -89,5 +89,6 @@ convert Half-width-kana into normal Katakana with diacritical marks combined  [�
 combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -> がパ]
 
 ## TODO or NOT TODO
-- Half-width-kana <- normal Katakana    # Isn't it need?
+- Half-width-kana <- normal Katakana
+- (normal/wide)tilde <-> Wave-dash
 
