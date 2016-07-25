@@ -1,5 +1,8 @@
 Unicode-JP (Rust)
 ----
+[![Build Status](https://travis-ci.org/gemmarx/unicode-jp-rs.svg?branch=master)](https://travis-ci.org/gemmarx/unicode-jp-rs)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 Converters of troublesome characters included in Japanese texts.
 - Half-width-kana[半角ｶﾅ;HANKAKU KANA] -> normal Katakana
 - Wide-alphanumeric[全角英数;ZENKAKU EISU] <-> normal ASCII
