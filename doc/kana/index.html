@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `kana` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, kana">
+
+    <title>kana - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'></p><script>window.sidebarCurrent = {name: 'kana', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>kana</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-0' class='srclink' href='../src/kana/src/kana.rs.html#2-409' title='goto source code'>[src]</a></span></h1>
+<h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.Kana.html'
+                                  title='kana::Kana'>Kana</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.ascii2wide.html'
+                                  title='kana::ascii2wide'>ascii2wide</a></td>
+                           <td class='docblock short'>
+                                <p>Convert normal ASCII characters into Wide-alphanumeric  [A -&gt; Ａ]</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.hira2kata.html'
+                                  title='kana::hira2kata'>hira2kata</a></td>
+                           <td class='docblock short'>
+                                <p>Convert Hiragana into Katakana  [あ -&gt; ア]</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.kata2hira.html'
+                                  title='kana::kata2hira'>kata2hira</a></td>
+                           <td class='docblock short'>
+                                <p>Convert Katakana into Hiragana  [ア -&gt; あ]</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.nowidespace.html'
+                                  title='kana::nowidespace'>nowidespace</a></td>
+                           <td class='docblock short'>
+                                <p>Convert Wide-space into normal space    [&quot;　&quot; -&gt; &quot; &quot;]</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.nowideyen.html'
+                                  title='kana::nowideyen'>nowideyen</a></td>
+                           <td class='docblock short'>
+                                <p>Convert Wide-yen into Half-width-yen    [&quot;￥&quot; -&gt; &quot;¥&quot;]</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.space2wide.html'
+                                  title='kana::space2wide'>space2wide</a></td>
+                           <td class='docblock short'>
+                                <p>Convert normal space into Wide-space    [&quot; &quot; -&gt; &quot;　&quot;]</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.vsmark2combi.html'
+                                  title='kana::vsmark2combi'>vsmark2combi</a></td>
+                           <td class='docblock short'>
+                                <p>Convert all separated Voiced-sound-marks into space+combining style &quot;\u{20}\u{3099}&quot;</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.vsmark2full.html'
+                                  title='kana::vsmark2full'>vsmark2full</a></td>
+                           <td class='docblock short'>
+                                <p>Convert all separated Voiced-sound-marks into full-width style &quot;\u{309B}&quot;</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.vsmark2half.html'
+                                  title='kana::vsmark2half'>vsmark2half</a></td>
+                           <td class='docblock short'>
+                                <p>Convert all separated Voiced-sound-marks into half-width style &quot;\u{FF9E}&quot;</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.wide2ascii.html'
+                                  title='kana::wide2ascii'>wide2ascii</a></td>
+                           <td class='docblock short'>
+                                <p>Convert Wide-alphanumeric into normal ASCII  [Ａ -&gt; A]</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.yen2wide.html'
+                                  title='kana::yen2wide'>yen2wide</a></td>
+                           <td class='docblock short'>
+                                <p>Convert Half-width-yen into Wide-yen    [&quot;¥&quot; -&gt; &quot;￥&quot;]</p>
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "kana";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

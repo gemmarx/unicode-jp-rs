@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="Source to the Rust file `src/kana.rs`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang">
+
+    <title>kana.rs.html -- source</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+</pre><pre class='rust '>
+
+<span class='attribute'>#[<span class='ident'>macro_use</span>]</span> <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>maplit</span>;
+<span class='attribute'>#[<span class='ident'>macro_use</span>]</span> <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>lazy_static</span>;
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>regex</span>;
+
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>char</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
+<span class='kw'>use</span> <span class='ident'>regex</span>::<span class='ident'>Regex</span>;
+
+<span class='comment'>//  0x3099  combining  ゙</span>
+<span class='comment'>//  0x309A  combining  ゚</span>
+<span class='comment'>//  0x309B  fullwidth ゛</span>
+<span class='comment'>//  0x309C  fullwidth ゜</span>
+<span class='comment'>//  0xFF9E  halfwidth ﾞ</span>
+<span class='comment'>//  0xFF9F  halfwidth ﾟ</span>
+<span class='comment'>//  0x20    space</span>
+
+<span class='kw'>const</span> <span class='ident'>CH_VOICED_COMBI</span>:     <span class='ident'>char</span> <span class='op'>=</span> <span class='string'>&#39;\u{3099}&#39;</span>;
+<span class='kw'>const</span> <span class='ident'>CH_SEMIVOICED_COMBI</span>: <span class='ident'>char</span> <span class='op'>=</span> <span class='string'>&#39;\u{309A}&#39;</span>;
+<span class='kw'>const</span> <span class='ident'>CH_VOICED_FULL</span>:      <span class='ident'>char</span> <span class='op'>=</span> <span class='string'>&#39;\u{309B}&#39;</span>;
+<span class='kw'>const</span> <span class='ident'>CH_SEMIVOICED_FULL</span>:  <span class='ident'>char</span> <span class='op'>=</span> <span class='string'>&#39;\u{309C}&#39;</span>;
+<span class='kw'>const</span> <span class='ident'>CH_VOICED_HALF</span>:      <span class='ident'>char</span> <span class='op'>=</span> <span class='string'>&#39;\u{FF9E}&#39;</span>;
+<span class='kw'>const</span> <span class='ident'>CH_SEMIVOICED_HALF</span>:  <span class='ident'>char</span> <span class='op'>=</span> <span class='string'>&#39;\u{FF9F}&#39;</span>;
+<span class='kw'>const</span> <span class='ident'>CH_SPACE</span>:            <span class='ident'>char</span> <span class='op'>=</span> <span class='string'>&#39;\u{20}&#39;</span>;
+
+<span class='kw'>const</span> <span class='ident'>VOICED_COMBI</span>:          <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span> <span class='op'>=</span> <span class='string'>&quot;\u{3099}&quot;</span>;
+<span class='kw'>const</span> <span class='ident'>SEMIVOICED_COMBI</span>:      <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span> <span class='op'>=</span> <span class='string'>&quot;\u{309A}&quot;</span>;
+<span class='kw'>const</span> <span class='ident'>VOICED_WITH_SPACE</span>:     <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span> <span class='op'>=</span> <span class='string'>&quot;\u{20}\u{3099}&quot;</span>;
+<span class='kw'>const</span> <span class='ident'>SEMIVOICED_WITH_SPACE</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span> <span class='op'>=</span> <span class='string'>&quot;\u{20}\u{309A}&quot;</span>;
+
+<span class='kw'>const</span> <span class='ident'>RE_VOICED_MARKS</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span>
+    <span class='op'>=</span> <span class='string'>r&quot;(?:\x20??\x{3099}|\x{309B}|\x{FF9E})&quot;</span>;
+<span class='kw'>const</span> <span class='ident'>RE_SEMIVOICED_MARKS</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span>
+    <span class='op'>=</span> <span class='string'>r&quot;(?:\x20??\x{309A}|\x{309C}|\x{FF9F})&quot;</span>;
+
+<span class='kw'>fn</span> <span class='ident'>shift_code</span><span class='op'>&lt;</span><span class='ident'>F</span>,<span class='ident'>G</span><span class='op'>&gt;</span>(<span class='ident'>judge</span>: <span class='ident'>F</span>, <span class='ident'>convert</span>: <span class='ident'>G</span>, <span class='ident'>src</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span>
+    <span class='kw'>where</span> <span class='ident'>F</span>: <span class='ident'>Fn</span>(<span class='ident'>u32</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span>,
+          <span class='ident'>G</span>: <span class='ident'>Fn</span>(<span class='ident'>u32</span>) <span class='op'>-&gt;</span> <span class='ident'>u32</span>
+{
+    <span class='ident'>src</span>.<span class='ident'>chars</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>c</span><span class='op'>|</span> {
+        <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>c</span> <span class='kw'>as</span> <span class='ident'>u32</span>;
+        <span class='kw'>if</span> <span class='ident'>judge</span>(<span class='ident'>k</span>) { <span class='ident'>char</span>::<span class='ident'>from_u32</span>(<span class='ident'>convert</span>(<span class='ident'>k</span>)).<span class='ident'>unwrap</span>() } <span class='kw'>else</span> { <span class='ident'>c</span> }
+    } ).<span class='ident'>collect</span>()
+}
+
+<span class='doccomment'>/// Convert Wide-alphanumeric into normal ASCII  [Ａ -&gt; A]</span>
+<span class='doccomment'>/// # Examples</span>
+<span class='doccomment'>/// ```</span>
+<span class='doccomment'>/// let s3 = &quot;＃＆Ｒｕｓｔ－１．６！&quot;;</span>
+<span class='doccomment'>/// assert_eq!(&quot;#&amp;Rust-1.6!&quot;, kana::wide2ascii(s3));</span>
+<span class='doccomment'>/// ```</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>wide2ascii</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+    <span class='ident'>shift_code</span>(<span class='op'>|</span><span class='ident'>x</span><span class='op'>|</span> <span class='number'>0xff00</span> <span class='op'>&lt;</span> <span class='ident'>x</span> <span class='op'>&amp;&amp;</span> <span class='ident'>x</span> <span class='op'>&lt;</span> <span class='number'>0xff5f</span>, <span class='op'>|</span><span class='ident'>x</span><span class='op'>|</span> <span class='ident'>x</span> <span class='op'>-</span> <span class='number'>0xfee0</span>, <span class='ident'>s</span>)
+}
+
+<span class='doccomment'>/// Convert normal ASCII characters into Wide-alphanumeric  [A -&gt; Ａ]</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>ascii2wide</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+    <span class='ident'>shift_code</span>(<span class='op'>|</span><span class='ident'>x</span><span class='op'>|</span> <span class='number'>0x0020</span> <span class='op'>&lt;</span> <span class='ident'>x</span> <span class='op'>&amp;&amp;</span> <span class='ident'>x</span> <span class='op'>&lt;</span> <span class='number'>0x007f</span>, <span class='op'>|</span><span class='ident'>x</span><span class='op'>|</span> <span class='ident'>x</span> <span class='op'>+</span> <span class='number'>0xfee0</span>, <span class='ident'>s</span>)
+}
+
+<span class='doccomment'>/// Convert Hiragana into Katakana  [あ -&gt; ア]</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>hira2kata</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+    <span class='ident'>shift_code</span>(<span class='op'>|</span><span class='ident'>x</span><span class='op'>|</span> <span class='number'>0x3041</span> <span class='op'>&lt;</span> <span class='ident'>x</span> <span class='op'>&amp;&amp;</span> <span class='ident'>x</span> <span class='op'>&lt;</span> <span class='number'>0x3096</span>, <span class='op'>|</span><span class='ident'>x</span><span class='op'>|</span> <span class='ident'>x</span> <span class='op'>+</span> <span class='number'>0x0060</span>, <span class='ident'>s</span>)
+}
+
+<span class='doccomment'>/// Convert Katakana into Hiragana  [ア -&gt; あ]</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>kata2hira</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+    <span class='ident'>shift_code</span>(<span class='op'>|</span><span class='ident'>x</span><span class='op'>|</span> <span class='number'>0x30A1</span> <span class='op'>&lt;</span> <span class='ident'>x</span> <span class='op'>&amp;&amp;</span> <span class='ident'>x</span> <span class='op'>&lt;</span> <span class='number'>0x30F6</span>, <span class='op'>|</span><span class='ident'>x</span><span class='op'>|</span> <span class='ident'>x</span> <span class='op'>-</span> <span class='number'>0x0060</span>, <span class='ident'>s</span>)
+}
+
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Kana</span> {
+    <span class='ident'>halves</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>char</span>, <span class='ident'>char</span><span class='op'>&gt;</span>,
+    <span class='ident'>voices</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>char</span>, <span class='ident'>char</span><span class='op'>&gt;</span>,
+    <span class='ident'>semivoices</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>char</span>, <span class='ident'>char</span><span class='op'>&gt;</span>,
+    <span class='ident'>voiced_halves</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>char</span>, <span class='ident'>char</span><span class='op'>&gt;</span>,
+    <span class='ident'>semivoiced_halves</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>char</span>, <span class='ident'>char</span><span class='op'>&gt;</span>,
+}
+
+<span class='kw'>impl</span> <span class='ident'>Kana</span> { <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>init</span>() <span class='op'>-&gt;</span> <span class='ident'>Kana</span> {
+    <span class='kw'>let</span> <span class='ident'>semivoiced_halves</span> <span class='op'>=</span> <span class='macro'>hashmap</span><span class='macro'>!</span> {
+        <span class='string'>&#39;\u{FF8A}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D1}&#39;</span>,   <span class='comment'>//  ﾊ	FF8A	パ	30D1</span>
+        <span class='string'>&#39;\u{FF8B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D4}&#39;</span>,   <span class='comment'>//  ﾋ	FF8B	ピ	30D4</span>
+        <span class='string'>&#39;\u{FF8C}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D7}&#39;</span>,   <span class='comment'>//  ﾌ	FF8C	プ	30D7</span>
+        <span class='string'>&#39;\u{FF8D}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30DA}&#39;</span>,   <span class='comment'>//  ﾍ	FF8D	ペ	30DA</span>
+        <span class='string'>&#39;\u{FF8E}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30DD}&#39;</span>,   <span class='comment'>//  ﾎ	FF8E	ポ	30DD</span>
+    };
+
+    <span class='kw'>let</span> <span class='ident'>voiced_halves</span> <span class='op'>=</span> <span class='macro'>hashmap</span><span class='macro'>!</span> {
+        <span class='string'>&#39;\u{FF66}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30FA}&#39;</span>,   <span class='comment'>//  ｦ	FF66	ヺ	30FA</span>
+        <span class='string'>&#39;\u{FF73}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30F4}&#39;</span>,   <span class='comment'>//  ｳ	FF73	ヴ	30F4</span>
+        <span class='string'>&#39;\u{FF76}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30AC}&#39;</span>,   <span class='comment'>//  ｶ	FF76	ガ	30AC</span>
+        <span class='string'>&#39;\u{FF77}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30AE}&#39;</span>,   <span class='comment'>//  ｷ	FF77	ギ	30AE</span>
+        <span class='string'>&#39;\u{FF78}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B0}&#39;</span>,   <span class='comment'>//  ｸ	FF78	グ	30B0</span>
+        <span class='string'>&#39;\u{FF79}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B2}&#39;</span>,   <span class='comment'>//  ｹ	FF79	ゲ	30B2</span>
+        <span class='string'>&#39;\u{FF7A}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B4}&#39;</span>,   <span class='comment'>//  ｺ	FF7A	ゴ	30B4</span>
+        <span class='string'>&#39;\u{FF7B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B6}&#39;</span>,   <span class='comment'>//  ｻ	FF7B	ザ	30B6</span>
+        <span class='string'>&#39;\u{FF7C}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B8}&#39;</span>,   <span class='comment'>//  ｼ	FF7C	ジ	30B8</span>
+        <span class='string'>&#39;\u{FF7D}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30BA}&#39;</span>,   <span class='comment'>//  ｽ	FF7D	ズ	30BA</span>
+        <span class='string'>&#39;\u{FF7E}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30BC}&#39;</span>,   <span class='comment'>//  ｾ	FF7E	ゼ	30BC</span>
+        <span class='string'>&#39;\u{FF7F}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30BE}&#39;</span>,   <span class='comment'>//  ｿ	FF7F	ゾ	30BE</span>
+        <span class='string'>&#39;\u{FF80}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C0}&#39;</span>,   <span class='comment'>//  ﾀ	FF80	ダ	30C0</span>
+        <span class='string'>&#39;\u{FF81}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C2}&#39;</span>,   <span class='comment'>//  ﾁ	FF81	ヂ	30C2</span>
+        <span class='string'>&#39;\u{FF82}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C5}&#39;</span>,   <span class='comment'>//  ﾂ	FF82	ヅ	30C5</span>
+        <span class='string'>&#39;\u{FF83}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C7}&#39;</span>,   <span class='comment'>//  ﾃ	FF83	デ	30C7</span>
+        <span class='string'>&#39;\u{FF84}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C9}&#39;</span>,   <span class='comment'>//  ﾄ	FF84	ド	30C9</span>
+        <span class='string'>&#39;\u{FF8A}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D0}&#39;</span>,   <span class='comment'>//  ﾊ	FF8A	バ	30D0</span>
+        <span class='string'>&#39;\u{FF8B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D3}&#39;</span>,   <span class='comment'>//  ﾋ	FF8B	ビ	30D3</span>
+        <span class='string'>&#39;\u{FF8C}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D6}&#39;</span>,   <span class='comment'>//  ﾌ	FF8C	ブ	30D6</span>
+        <span class='string'>&#39;\u{FF8D}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D9}&#39;</span>,   <span class='comment'>//  ﾍ	FF8D	ベ	30D9</span>
+        <span class='string'>&#39;\u{FF8E}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30DC}&#39;</span>,   <span class='comment'>//  ﾎ	FF8E	ボ	30DC</span>
+        <span class='string'>&#39;\u{FF9C}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30F7}&#39;</span>,   <span class='comment'>//  ﾜ	FF9C	ヷ	30F7</span>
+    };
+
+    <span class='kw'>let</span> <span class='ident'>semivoices</span> <span class='op'>=</span> <span class='macro'>hashmap</span><span class='macro'>!</span> {
+        <span class='string'>&#39;\u{30CF}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D1}&#39;</span>,   <span class='comment'>//  ハ	30CF	パ	30D1</span>
+        <span class='string'>&#39;\u{30D2}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D4}&#39;</span>,   <span class='comment'>//  ヒ	30D2	ピ	30D4</span>
+        <span class='string'>&#39;\u{30D5}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D7}&#39;</span>,   <span class='comment'>//  フ	30D5	プ	30D7</span>
+        <span class='string'>&#39;\u{30D8}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30DA}&#39;</span>,   <span class='comment'>//  ヘ	30D8	ペ	30DA</span>
+        <span class='string'>&#39;\u{30DB}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30DD}&#39;</span>,   <span class='comment'>//  ホ	30DB	ポ	30DD</span>
+        <span class='string'>&#39;\u{306F}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3071}&#39;</span>,   <span class='comment'>//  は	306F	ぱ	3071</span>
+        <span class='string'>&#39;\u{3072}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3074}&#39;</span>,   <span class='comment'>//  ひ	3072	ぴ	3074</span>
+        <span class='string'>&#39;\u{3075}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3077}&#39;</span>,   <span class='comment'>//  ふ	3075	ぷ	3077</span>
+        <span class='string'>&#39;\u{3078}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{307A}&#39;</span>,   <span class='comment'>//  へ	3078	ぺ	307A</span>
+        <span class='string'>&#39;\u{307B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{307D}&#39;</span>,   <span class='comment'>//  ほ	307B	ぽ	307D</span>
+    };
+
+    <span class='kw'>let</span> <span class='ident'>voices</span> <span class='op'>=</span> <span class='macro'>hashmap</span><span class='macro'>!</span> {
+        <span class='string'>&#39;\u{30A6}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30F4}&#39;</span>,   <span class='comment'>//  ウ	30A6	ヴ	30F4</span>
+        <span class='string'>&#39;\u{30AB}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30AC}&#39;</span>,   <span class='comment'>//  カ	30AB	ガ	30AC</span>
+        <span class='string'>&#39;\u{30AD}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30AE}&#39;</span>,   <span class='comment'>//  キ	30AD	ギ	30AE</span>
+        <span class='string'>&#39;\u{30AF}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B0}&#39;</span>,   <span class='comment'>//  ク	30AF	グ	30B0</span>
+        <span class='string'>&#39;\u{30B1}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B2}&#39;</span>,   <span class='comment'>//  ケ	30B1	ゲ	30B2</span>
+        <span class='string'>&#39;\u{30B3}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B4}&#39;</span>,   <span class='comment'>//  コ	30B3	ゴ	30B4</span>
+        <span class='string'>&#39;\u{30B5}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B6}&#39;</span>,   <span class='comment'>//  サ	30B5	ザ	30B6</span>
+        <span class='string'>&#39;\u{30B7}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B8}&#39;</span>,   <span class='comment'>//  シ	30B7	ジ	30B8</span>
+        <span class='string'>&#39;\u{30B9}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30BA}&#39;</span>,   <span class='comment'>//  ス	30B9	ズ	30BA</span>
+        <span class='string'>&#39;\u{30BB}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30BC}&#39;</span>,   <span class='comment'>//  セ	30BB	ゼ	30BC</span>
+        <span class='string'>&#39;\u{30BD}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30BE}&#39;</span>,   <span class='comment'>//  ソ	30BD	ゾ	30BE</span>
+        <span class='string'>&#39;\u{30BF}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C0}&#39;</span>,   <span class='comment'>//  タ	30BF	ダ	30C0</span>
+        <span class='string'>&#39;\u{30C1}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C2}&#39;</span>,   <span class='comment'>//  チ	30C1	ヂ	30C2</span>
+        <span class='string'>&#39;\u{30C4}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C5}&#39;</span>,   <span class='comment'>//  ツ	30C4	ヅ	30C5</span>
+        <span class='string'>&#39;\u{30C6}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C7}&#39;</span>,   <span class='comment'>//  テ	30C6	デ	30C7</span>
+        <span class='string'>&#39;\u{30C8}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C9}&#39;</span>,   <span class='comment'>//  ト	30C8	ド	30C9</span>
+        <span class='string'>&#39;\u{30CF}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D0}&#39;</span>,   <span class='comment'>//  ハ	30CF	バ	30D0</span>
+        <span class='string'>&#39;\u{30D2}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D3}&#39;</span>,   <span class='comment'>//  ヒ	30D2	ビ	30D3</span>
+        <span class='string'>&#39;\u{30D5}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D6}&#39;</span>,   <span class='comment'>//  フ	30D5	ブ	30D6</span>
+        <span class='string'>&#39;\u{30D8}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D9}&#39;</span>,   <span class='comment'>//  ヘ	30D8	ベ	30D9</span>
+        <span class='string'>&#39;\u{30DB}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30DC}&#39;</span>,   <span class='comment'>//  ホ	30DB	ボ	30DC</span>
+        <span class='string'>&#39;\u{30EF}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30F7}&#39;</span>,   <span class='comment'>//  ワ	30EF	ヷ	30F7</span>
+        <span class='string'>&#39;\u{30F0}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30F8}&#39;</span>,   <span class='comment'>//  ヰ	30F0	ヸ	30F8</span>
+        <span class='string'>&#39;\u{30F1}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30F9}&#39;</span>,   <span class='comment'>//  ヱ	30F1	ヹ	30F9</span>
+        <span class='string'>&#39;\u{30F2}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30FA}&#39;</span>,   <span class='comment'>//  ヲ	30F2	ヺ	30FA</span>
+        <span class='string'>&#39;\u{3046}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3094}&#39;</span>,   <span class='comment'>//  う	3046	ゔ	3094</span>
+        <span class='string'>&#39;\u{304B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{304C}&#39;</span>,   <span class='comment'>//  か	304B	が	304C</span>
+        <span class='string'>&#39;\u{304D}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{304E}&#39;</span>,   <span class='comment'>//  き	304D	ぎ	304E</span>
+        <span class='string'>&#39;\u{304F}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3050}&#39;</span>,   <span class='comment'>//  く	304F	ぐ	3050</span>
+        <span class='string'>&#39;\u{3051}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3052}&#39;</span>,   <span class='comment'>//  け	3051	げ	3052</span>
+        <span class='string'>&#39;\u{3053}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3054}&#39;</span>,   <span class='comment'>//  こ	3053	ご	3054</span>
+        <span class='string'>&#39;\u{3055}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3056}&#39;</span>,   <span class='comment'>//  さ	3055	ざ	3056</span>
+        <span class='string'>&#39;\u{3057}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3058}&#39;</span>,   <span class='comment'>//  し	3057	じ	3058</span>
+        <span class='string'>&#39;\u{3059}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{305A}&#39;</span>,   <span class='comment'>//  す	3059	ず	305A</span>
+        <span class='string'>&#39;\u{305B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{305C}&#39;</span>,   <span class='comment'>//  せ	305B	ぜ	305C</span>
+        <span class='string'>&#39;\u{305D}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{305E}&#39;</span>,   <span class='comment'>//  そ	305D	ぞ	305E</span>
+        <span class='string'>&#39;\u{305F}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3060}&#39;</span>,   <span class='comment'>//  た	305F	だ	3060</span>
+        <span class='string'>&#39;\u{3061}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3062}&#39;</span>,   <span class='comment'>//  ち	3061	ぢ	3062</span>
+        <span class='string'>&#39;\u{3064}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3065}&#39;</span>,   <span class='comment'>//  つ	3064	づ	3065</span>
+        <span class='string'>&#39;\u{3066}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3067}&#39;</span>,   <span class='comment'>//  て	3066	で	3067</span>
+        <span class='string'>&#39;\u{3068}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3069}&#39;</span>,   <span class='comment'>//  と	3068	ど	3069</span>
+        <span class='string'>&#39;\u{306F}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3070}&#39;</span>,   <span class='comment'>//  は	306F	ば	3070</span>
+        <span class='string'>&#39;\u{3072}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3073}&#39;</span>,   <span class='comment'>//  ひ	3072	び	3073</span>
+        <span class='string'>&#39;\u{3075}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3076}&#39;</span>,   <span class='comment'>//  ふ	3075	ぶ	3076</span>
+        <span class='string'>&#39;\u{3078}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3079}&#39;</span>,   <span class='comment'>//  へ	3078	べ	3079</span>
+        <span class='string'>&#39;\u{307B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{307C}&#39;</span>,   <span class='comment'>//  ほ	307B	ぼ	307C</span>
+        <span class='string'>&#39;\u{309D}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{309E}&#39;</span>,   <span class='comment'>//  ゝ	309D	ゞ	309E</span>
+    };
+
+    <span class='kw'>let</span> <span class='ident'>halves</span> <span class='op'>=</span> <span class='macro'>hashmap</span><span class='macro'>!</span> {
+        <span class='string'>&#39;\u{FF61}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3002}&#39;</span>,   <span class='comment'>//  ｡	FF61	。	3002</span>
+        <span class='string'>&#39;\u{FF62}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{300C}&#39;</span>,   <span class='comment'>//  ｢	FF62	「	300C</span>
+        <span class='string'>&#39;\u{FF63}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{300D}&#39;</span>,   <span class='comment'>//  ｣	FF63	」	300D</span>
+        <span class='string'>&#39;\u{FF64}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3001}&#39;</span>,   <span class='comment'>//  ､	FF64	、	3001</span>
+        <span class='string'>&#39;\u{FF65}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30FB}&#39;</span>,   <span class='comment'>//  ･	FF65	・	30FB</span>
+        <span class='string'>&#39;\u{FF66}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30F2}&#39;</span>,   <span class='comment'>//  ｦ	FF66	ヲ	30F2</span>
+        <span class='string'>&#39;\u{FF67}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30A1}&#39;</span>,   <span class='comment'>//  ｧ	FF67	ァ	30A1</span>
+        <span class='string'>&#39;\u{FF68}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30A3}&#39;</span>,   <span class='comment'>//  ｨ	FF68	ィ	30A3</span>
+        <span class='string'>&#39;\u{FF69}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30A5}&#39;</span>,   <span class='comment'>//  ｩ	FF69	ゥ	30A5</span>
+        <span class='string'>&#39;\u{FF6A}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30A7}&#39;</span>,   <span class='comment'>//  ｪ	FF6A	ェ	30A7</span>
+        <span class='string'>&#39;\u{FF6B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30A9}&#39;</span>,   <span class='comment'>//  ｫ	FF6B	ォ	30A9</span>
+        <span class='string'>&#39;\u{FF6C}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30E3}&#39;</span>,   <span class='comment'>//  ｬ	FF6C	ャ	30E3</span>
+        <span class='string'>&#39;\u{FF6D}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30E5}&#39;</span>,   <span class='comment'>//  ｭ	FF6D	ュ	30E5</span>
+        <span class='string'>&#39;\u{FF6E}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30E7}&#39;</span>,   <span class='comment'>//  ｮ	FF6E	ョ	30E7</span>
+        <span class='string'>&#39;\u{FF6F}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C3}&#39;</span>,   <span class='comment'>//  ｯ	FF6F	ッ	30C3</span>
+        <span class='string'>&#39;\u{FF70}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30FC}&#39;</span>,   <span class='comment'>//  ｰ	FF70	ー	30FC</span>
+        <span class='string'>&#39;\u{FF71}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30A2}&#39;</span>,   <span class='comment'>//  ｱ	FF71	ア	30A2</span>
+        <span class='string'>&#39;\u{FF72}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30A4}&#39;</span>,   <span class='comment'>//  ｲ	FF72	イ	30A4</span>
+        <span class='string'>&#39;\u{FF73}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30A6}&#39;</span>,   <span class='comment'>//  ｳ	FF73	ウ	30A6</span>
+        <span class='string'>&#39;\u{FF74}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30A8}&#39;</span>,   <span class='comment'>//  ｴ	FF74	エ	30A8</span>
+        <span class='string'>&#39;\u{FF75}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30AA}&#39;</span>,   <span class='comment'>//  ｵ	FF75	オ	30AA</span>
+        <span class='string'>&#39;\u{FF76}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30AB}&#39;</span>,   <span class='comment'>//  ｶ	FF76	カ	30AB</span>
+        <span class='string'>&#39;\u{FF77}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30AD}&#39;</span>,   <span class='comment'>//  ｷ	FF77	キ	30AD</span>
+        <span class='string'>&#39;\u{FF78}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30AF}&#39;</span>,   <span class='comment'>//  ｸ	FF78	ク	30AF</span>
+        <span class='string'>&#39;\u{FF79}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B1}&#39;</span>,   <span class='comment'>//  ｹ	FF79	ケ	30B1</span>
+        <span class='string'>&#39;\u{FF7A}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B3}&#39;</span>,   <span class='comment'>//  ｺ	FF7A	コ	30B3</span>
+        <span class='string'>&#39;\u{FF7B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B5}&#39;</span>,   <span class='comment'>//  ｻ	FF7B	サ	30B5</span>
+        <span class='string'>&#39;\u{FF7C}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B7}&#39;</span>,   <span class='comment'>//  ｼ	FF7C	シ	30B7</span>
+        <span class='string'>&#39;\u{FF7D}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30B9}&#39;</span>,   <span class='comment'>//  ｽ	FF7D	ス	30B9</span>
+        <span class='string'>&#39;\u{FF7E}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30BB}&#39;</span>,   <span class='comment'>//  ｾ	FF7E	セ	30BB</span>
+        <span class='string'>&#39;\u{FF7F}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30BD}&#39;</span>,   <span class='comment'>//  ｿ	FF7F	ソ	30BD</span>
+        <span class='string'>&#39;\u{FF80}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30BF}&#39;</span>,   <span class='comment'>//  ﾀ	FF80	タ	30BF</span>
+        <span class='string'>&#39;\u{FF81}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C1}&#39;</span>,   <span class='comment'>//  ﾁ	FF81	チ	30C1</span>
+        <span class='string'>&#39;\u{FF82}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C4}&#39;</span>,   <span class='comment'>//  ﾂ	FF82	ツ	30C4</span>
+        <span class='string'>&#39;\u{FF83}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C6}&#39;</span>,   <span class='comment'>//  ﾃ	FF83	テ	30C6</span>
+        <span class='string'>&#39;\u{FF84}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30C8}&#39;</span>,   <span class='comment'>//  ﾄ	FF84	ト	30C8</span>
+        <span class='string'>&#39;\u{FF85}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30CA}&#39;</span>,   <span class='comment'>//  ﾅ	FF85	ナ	30CA</span>
+        <span class='string'>&#39;\u{FF86}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30CB}&#39;</span>,   <span class='comment'>//  ﾆ	FF86	ニ	30CB</span>
+        <span class='string'>&#39;\u{FF87}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30CC}&#39;</span>,   <span class='comment'>//  ﾇ	FF87	ヌ	30CC</span>
+        <span class='string'>&#39;\u{FF88}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30CD}&#39;</span>,   <span class='comment'>//  ﾈ	FF88	ネ	30CD</span>
+        <span class='string'>&#39;\u{FF89}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30CE}&#39;</span>,   <span class='comment'>//  ﾉ	FF89	ノ	30CE</span>
+        <span class='string'>&#39;\u{FF8A}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30CF}&#39;</span>,   <span class='comment'>//  ﾊ	FF8A	ハ	30CF</span>
+        <span class='string'>&#39;\u{FF8B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D2}&#39;</span>,   <span class='comment'>//  ﾋ	FF8B	ヒ	30D2</span>
+        <span class='string'>&#39;\u{FF8C}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D5}&#39;</span>,   <span class='comment'>//  ﾌ	FF8C	フ	30D5</span>
+        <span class='string'>&#39;\u{FF8D}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30D8}&#39;</span>,   <span class='comment'>//  ﾍ	FF8D	ヘ	30D8</span>
+        <span class='string'>&#39;\u{FF8E}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30DB}&#39;</span>,   <span class='comment'>//  ﾎ	FF8E	ホ	30DB</span>
+        <span class='string'>&#39;\u{FF8F}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30DE}&#39;</span>,   <span class='comment'>//  ﾏ	FF8F	マ	30DE</span>
+        <span class='string'>&#39;\u{FF90}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30DF}&#39;</span>,   <span class='comment'>//  ﾐ	FF90	ミ	30DF</span>
+        <span class='string'>&#39;\u{FF91}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30E0}&#39;</span>,   <span class='comment'>//  ﾑ	FF91	ム	30E0</span>
+        <span class='string'>&#39;\u{FF92}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30E1}&#39;</span>,   <span class='comment'>//  ﾒ	FF92	メ	30E1</span>
+        <span class='string'>&#39;\u{FF93}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30E2}&#39;</span>,   <span class='comment'>//  ﾓ	FF93	モ	30E2</span>
+        <span class='string'>&#39;\u{FF94}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30E4}&#39;</span>,   <span class='comment'>//  ﾔ	FF94	ヤ	30E4</span>
+        <span class='string'>&#39;\u{FF95}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30E6}&#39;</span>,   <span class='comment'>//  ﾕ	FF95	ユ	30E6</span>
+        <span class='string'>&#39;\u{FF96}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30E8}&#39;</span>,   <span class='comment'>//  ﾖ	FF96	ヨ	30E8</span>
+        <span class='string'>&#39;\u{FF97}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30E9}&#39;</span>,   <span class='comment'>//  ﾗ	FF97	ラ	30E9</span>
+        <span class='string'>&#39;\u{FF98}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30EA}&#39;</span>,   <span class='comment'>//  ﾘ	FF98	リ	30EA</span>
+        <span class='string'>&#39;\u{FF99}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30EB}&#39;</span>,   <span class='comment'>//  ﾙ	FF99	ル	30EB</span>
+        <span class='string'>&#39;\u{FF9A}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30EC}&#39;</span>,   <span class='comment'>//  ﾚ	FF9A	レ	30EC</span>
+        <span class='string'>&#39;\u{FF9B}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30ED}&#39;</span>,   <span class='comment'>//  ﾛ	FF9B	ロ	30ED</span>
+        <span class='string'>&#39;\u{FF9C}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30EF}&#39;</span>,   <span class='comment'>//  ﾜ	FF9C	ワ	30EF</span>
+        <span class='string'>&#39;\u{FF9D}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{30F3}&#39;</span>,   <span class='comment'>//  ﾝ	FF9D	ン	30F3</span>
+        <span class='string'>&#39;\u{FF9E}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{3099}&#39;</span>,   <span class='comment'>//  ﾞ	FF9E	 ゙	3099</span>
+        <span class='string'>&#39;\u{FF9F}&#39;</span> <span class='op'>=&gt;</span> <span class='string'>&#39;\u{309A}&#39;</span>,   <span class='comment'>//  ﾟ	FF9F	 ゚	309A</span>
+        <span class='comment'>//&#39;\u{FF9E}&#39; =&gt; &#39;\u{309B}&#39;,   //  ﾞ	FF9E	゛	309B</span>
+        <span class='comment'>//&#39;\u{FF9F}&#39; =&gt; &#39;\u{309C}&#39;,   //  ﾟ	FF9F	゜	309C</span>
+    };
+
+    <span class='ident'>Kana</span> {
+        <span class='ident'>halves</span>: <span class='ident'>halves</span>,
+        <span class='ident'>voices</span>: <span class='ident'>voices</span>,
+        <span class='ident'>semivoices</span>: <span class='ident'>semivoices</span>,
+        <span class='ident'>voiced_halves</span>: <span class='ident'>voiced_halves</span>,
+        <span class='ident'>semivoiced_halves</span>: <span class='ident'>semivoiced_halves</span>,
+    }
+} }
+
+<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>push_content</span> {
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>judge</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>table</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>res</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {
+        <span class='kw'>if</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>judge</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>) {
+            <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>v</span>) <span class='op'>=</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>table</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>) {
+                <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>res</span>.<span class='ident'>push</span>(<span class='op'>*</span><span class='ident'>v</span>);
+                <span class='kw'>return</span> <span class='prelude-val'>None</span>;
+            }
+        }
+    };
+}
+
+<span class='kw'>impl</span> <span class='ident'>Kana</span> {
+    <span class='doccomment'>/// Convert Half-width-kana into normal Katakana with diacritical marks separated  [ｱﾞﾊﾟ -&gt; ア゙パ]  </span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// This method is simple, but tends to cause troubles when rendering.</span>
+    <span class='doccomment'>/// In such a case, use half2kana() or execute vsmark2{half|full|combi}() as a post process.</span>
+    <span class='doccomment'>/// # Examples</span>
+    <span class='doccomment'>/// ```</span>
+    <span class='doccomment'>/// use kana::Kana</span>
+    <span class='doccomment'>/// let k = Kana::init();</span>
+
+    <span class='doccomment'>/// let s1 = &quot;ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ&quot;;</span>
+    <span class='doccomment'>/// assert_eq!(&quot;マツオ バショウ ア゚&quot;, k.half2full(s1));</span>
+    <span class='doccomment'>/// ```</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>half2full</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+        <span class='ident'>s</span>.<span class='ident'>chars</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>c</span><span class='op'>|</span> <span class='ident'>consult</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>halves</span>, <span class='kw-2'>&amp;</span><span class='ident'>c</span>)).<span class='ident'>collect</span>()
+    }
+
+    <span class='doccomment'>/// Convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -&gt; アﾞパ]</span>
+    <span class='doccomment'>/// # Examples</span>
+    <span class='doccomment'>/// ```</span>
+    <span class='doccomment'>/// use kana::Kana</span>
+    <span class='doccomment'>/// let k = Kana::init();</span>
+
+    <span class='doccomment'>/// let s1 = &quot;ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ&quot;;</span>
+    <span class='doccomment'>/// assert_eq!(&quot;マツオ バショウ ア ゚&quot;, k.half2kana(s1));</span>
+    <span class='doccomment'>/// ```</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>half2kana</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>line</span> <span class='op'>=</span> <span class='ident'>String</span>::<span class='ident'>with_capacity</span>(<span class='ident'>s</span>.<span class='ident'>len</span>());
+        <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{} &quot;</span>, <span class='ident'>s</span>).<span class='ident'>chars</span>().<span class='ident'>fold</span>(<span class='prelude-val'>None</span>, <span class='op'>|</span><span class='ident'>prev</span>, <span class='ident'>b</span><span class='op'>|</span> {
+            <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>a</span>) <span class='op'>=</span> <span class='ident'>prev</span> {
+                <span class='macro'>push_content</span><span class='macro'>!</span>(<span class='op'>|</span><span class='ident'>b</span><span class='op'>|</span> <span class='ident'>b</span> <span class='op'>==</span> <span class='ident'>CH_VOICED_HALF</span>,
+                            <span class='self'>self</span>.<span class='ident'>voiced_halves</span>, <span class='ident'>line</span>, <span class='ident'>a</span>, <span class='ident'>b</span>);
+                <span class='macro'>push_content</span><span class='macro'>!</span>(<span class='op'>|</span><span class='ident'>b</span><span class='op'>|</span> <span class='ident'>b</span> <span class='op'>==</span> <span class='ident'>CH_SEMIVOICED_HALF</span>,
+                            <span class='self'>self</span>.<span class='ident'>semivoiced_halves</span>, <span class='ident'>line</span>, <span class='ident'>a</span>, <span class='ident'>b</span>);
+                <span class='kw'>if</span> <span class='ident'>a</span> <span class='op'>==</span> <span class='ident'>CH_VOICED_HALF</span> <span class='op'>||</span>
+                <span class='ident'>a</span> <span class='op'>==</span> <span class='ident'>CH_SEMIVOICED_HALF</span> { <span class='ident'>line</span>.<span class='ident'>push</span>(<span class='ident'>CH_SPACE</span>); }
+                <span class='ident'>line</span>.<span class='ident'>push</span>(<span class='ident'>consult</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>halves</span>, <span class='kw-2'>&amp;</span><span class='ident'>a</span>));
+            }
+            <span class='prelude-val'>Some</span>(<span class='ident'>b</span>)
+        } );
+
+        <span class='ident'>line</span>
+    }
+
+    <span class='doccomment'>/// Combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -&gt; がパ]</span>
+    <span class='doccomment'>/// # Examples</span>
+    <span class='doccomment'>/// ```</span>
+    <span class='doccomment'>/// use kana::Kana</span>
+    <span class='doccomment'>/// let k = Kana::init();</span>
+    <span class='doccomment'>/// let s2 = &quot;ひ゜ひ゛んは゛&quot;;</span>
+    <span class='doccomment'>/// assert_eq!(&quot;ぴびんば&quot;, k.combine(s2));</span>
+
+    <span class='doccomment'>/// ```</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>combine</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+        <span class='kw'>let</span> <span class='ident'>ss</span> <span class='op'>=</span> <span class='ident'>despace</span>(<span class='ident'>s</span>);
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>line</span> <span class='op'>=</span> <span class='ident'>String</span>::<span class='ident'>with_capacity</span>(<span class='ident'>ss</span>.<span class='ident'>len</span>());
+        <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{} &quot;</span>, <span class='ident'>ss</span>).<span class='ident'>chars</span>().<span class='ident'>fold</span>(<span class='prelude-val'>None</span>, <span class='op'>|</span><span class='ident'>prev</span>, <span class='ident'>b</span><span class='op'>|</span> {
+            <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>a</span>) <span class='op'>=</span> <span class='ident'>prev</span> {
+                <span class='macro'>push_content</span><span class='macro'>!</span>(<span class='op'>|</span><span class='ident'>b</span><span class='op'>|</span> <span class='ident'>b</span> <span class='op'>==</span> <span class='ident'>CH_VOICED_HALF</span> <span class='op'>||</span>
+                                <span class='ident'>b</span> <span class='op'>==</span> <span class='ident'>CH_VOICED_FULL</span> <span class='op'>||</span>
+                                <span class='ident'>b</span> <span class='op'>==</span> <span class='ident'>CH_VOICED_COMBI</span>,
+                            <span class='self'>self</span>.<span class='ident'>voices</span>, <span class='ident'>line</span>, <span class='ident'>a</span>, <span class='ident'>b</span>);
+                <span class='macro'>push_content</span><span class='macro'>!</span>(<span class='op'>|</span><span class='ident'>b</span><span class='op'>|</span> <span class='ident'>b</span> <span class='op'>==</span> <span class='ident'>CH_SEMIVOICED_HALF</span> <span class='op'>||</span>
+                                <span class='ident'>b</span> <span class='op'>==</span> <span class='ident'>CH_SEMIVOICED_FULL</span> <span class='op'>||</span>
+                                <span class='ident'>b</span> <span class='op'>==</span> <span class='ident'>CH_SEMIVOICED_COMBI</span>,
+                            <span class='self'>self</span>.<span class='ident'>semivoices</span>, <span class='ident'>line</span>, <span class='ident'>a</span>, <span class='ident'>b</span>);
+                <span class='ident'>line</span>.<span class='ident'>push</span>(<span class='ident'>a</span>);
+            }
+            <span class='prelude-val'>Some</span>(<span class='ident'>b</span>)
+        } );
+
+        <span class='ident'>enspace</span>(<span class='kw-2'>&amp;</span><span class='ident'>line</span>)
+    }
+}
+
+<span class='kw'>fn</span> <span class='ident'>consult</span>(<span class='ident'>table</span>: <span class='kw-2'>&amp;</span><span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>char</span>,<span class='ident'>char</span><span class='op'>&gt;</span>, <span class='ident'>c</span>: <span class='kw-2'>&amp;</span><span class='ident'>char</span>) <span class='op'>-&gt;</span> <span class='ident'>char</span> {
+    <span class='kw'>match</span> <span class='ident'>table</span>.<span class='ident'>get</span>(<span class='ident'>c</span>) {
+        <span class='prelude-val'>None</span>    <span class='op'>=&gt;</span> <span class='op'>*</span><span class='ident'>c</span>,
+        <span class='prelude-val'>Some</span>(<span class='ident'>x</span>) <span class='op'>=&gt;</span> <span class='op'>*</span><span class='ident'>x</span>,
+    }
+}
+
+<span class='kw'>fn</span> <span class='ident'>despace</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+    <span class='kw'>let</span> <span class='ident'>s_</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='ident'>s</span>.<span class='ident'>replace</span>(<span class='ident'>VOICED_WITH_SPACE</span>, <span class='ident'>VOICED_COMBI</span>);
+    <span class='ident'>s_</span>.<span class='ident'>replace</span>(<span class='ident'>SEMIVOICED_WITH_SPACE</span>, <span class='ident'>SEMIVOICED_COMBI</span>)
+}
+
+<span class='kw'>fn</span> <span class='ident'>enspace</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+    <span class='kw'>let</span> <span class='ident'>s_</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='ident'>s</span>.<span class='ident'>replace</span>(<span class='ident'>VOICED_COMBI</span>, <span class='ident'>VOICED_WITH_SPACE</span>);
+    <span class='ident'>s_</span>.<span class='ident'>replace</span>(<span class='ident'>SEMIVOICED_COMBI</span>, <span class='ident'>SEMIVOICED_WITH_SPACE</span>)
+}
+
+<span class='kw'>fn</span> <span class='ident'>replace_marks</span>(<span class='ident'>vmark</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>, <span class='ident'>svmark</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>, <span class='ident'>src</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+    <span class='macro'>lazy_static</span><span class='macro'>!</span> {
+        <span class='kw'>static</span> <span class='kw-2'>ref</span> <span class='ident'>RE1</span>: <span class='ident'>Regex</span> <span class='op'>=</span> <span class='ident'>Regex</span>::<span class='ident'>new</span>(<span class='ident'>RE_VOICED_MARKS</span>).<span class='ident'>unwrap</span>();
+        <span class='kw'>static</span> <span class='kw-2'>ref</span> <span class='ident'>RE2</span>: <span class='ident'>Regex</span> <span class='op'>=</span> <span class='ident'>Regex</span>::<span class='ident'>new</span>(<span class='ident'>RE_SEMIVOICED_MARKS</span>).<span class='ident'>unwrap</span>();
+    }
+    <span class='kw'>let</span> <span class='ident'>s_</span> <span class='op'>=</span> <span class='ident'>RE1</span>.<span class='ident'>replace_all</span>(<span class='ident'>src</span>, <span class='ident'>vmark</span>);
+    <span class='ident'>RE2</span>.<span class='ident'>replace_all</span>(<span class='kw-2'>&amp;</span><span class='ident'>s_</span>, <span class='ident'>svmark</span>)
+}
+
+<span class='doccomment'>/// Convert all separated Voiced-sound-marks into half-width style &quot;\u{FF9E}&quot;</span>
+<span class='doccomment'>/// # Examples</span>
+<span class='doccomment'>/// ```</span>
+<span class='doccomment'>/// let s = &quot;ひﾟひ゛んは ゙&quot;;</span>
+<span class='doccomment'>/// assert_eq!(&quot;ひﾟひﾞんはﾞ&quot;, kana::vsmark2combi(s));</span>
+<span class='doccomment'>/// ```</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>vsmark2half</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+    <span class='ident'>replace_marks</span>(<span class='kw-2'>&amp;</span><span class='ident'>CH_VOICED_HALF</span>.<span class='ident'>to_string</span>(),
+                  <span class='kw-2'>&amp;</span><span class='ident'>CH_SEMIVOICED_HALF</span>.<span class='ident'>to_string</span>(), <span class='ident'>s</span>)
+}
+
+<span class='doccomment'>/// Convert all separated Voiced-sound-marks into full-width style &quot;\u{309B}&quot;</span>
+<span class='doccomment'>/// # Examples</span>
+<span class='doccomment'>/// ```</span>
+<span class='doccomment'>/// let s = &quot;ひﾟひ゛んは ゙&quot;;</span>
+<span class='doccomment'>/// assert_eq!(&quot;ひ゜ひ゛んは゛&quot;, kana::vsmark2combi(s));</span>
+<span class='doccomment'>/// ```</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>vsmark2full</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+    <span class='ident'>replace_marks</span>(<span class='kw-2'>&amp;</span><span class='ident'>CH_VOICED_FULL</span>.<span class='ident'>to_string</span>(),
+                  <span class='kw-2'>&amp;</span><span class='ident'>CH_SEMIVOICED_FULL</span>.<span class='ident'>to_string</span>(), <span class='ident'>s</span>)
+}
+
+<span class='doccomment'>/// Convert all separated Voiced-sound-marks into space+combining style &quot;\u{20}\u{3099}&quot;</span>
+<span class='doccomment'>/// # Examples</span>
+<span class='doccomment'>/// ```</span>
+<span class='doccomment'>/// let s = &quot;ひﾟひ゛んは ゙&quot;;</span>
+<span class='doccomment'>/// assert_eq!(&quot;ひ ゚ひ ゙んは ゙&quot;, kana::vsmark2combi(s));</span>
+<span class='doccomment'>/// ```</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>vsmark2combi</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+    <span class='ident'>replace_marks</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}{}&quot;</span>, <span class='ident'>CH_SPACE</span>, <span class='ident'>CH_VOICED_COMBI</span>),
+                  <span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}{}&quot;</span>, <span class='ident'>CH_SPACE</span>, <span class='ident'>CH_SEMIVOICED_COMBI</span>), <span class='ident'>s</span>)
+}
+
+<span class='doccomment'>/// Convert Wide-space into normal space    [&quot;　&quot; -&gt; &quot; &quot;]</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>nowidespace</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> { <span class='ident'>s</span>.<span class='ident'>replace</span>(<span class='string'>&quot;\u{3000}&quot;</span>, <span class='string'>&quot;\u{20}&quot;</span>) }
+
+<span class='doccomment'>/// Convert normal space into Wide-space    [&quot; &quot; -&gt; &quot;　&quot;]</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>space2wide</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> { <span class='ident'>s</span>.<span class='ident'>replace</span>(<span class='string'>&quot;\u{20}&quot;</span>, <span class='string'>&quot;\u{3000}&quot;</span>) }
+
+<span class='doccomment'>/// Convert Wide-yen into Half-width-yen    [&quot;￥&quot; -&gt; &quot;¥&quot;]</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>nowideyen</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> { <span class='ident'>s</span>.<span class='ident'>replace</span>(<span class='string'>&quot;\u{ffe5}&quot;</span>, <span class='string'>&quot;\u{a5}&quot;</span>) }
+
+<span class='doccomment'>/// Convert Half-width-yen into Wide-yen    [&quot;¥&quot; -&gt; &quot;￥&quot;]</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>yen2wide</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> { <span class='ident'>s</span>.<span class='ident'>replace</span>(<span class='string'>&quot;\u{a5}&quot;</span>, <span class='string'>&quot;\u{ffe5}&quot;</span>) }
+
+</pre>
+</section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "kana";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    
+    <script defer src="../../../search-index.js"></script>
+</body>
+</html>
