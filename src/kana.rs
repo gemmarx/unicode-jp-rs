@@ -1,4 +1,11 @@
 
+//! Converters of troublesome characters included in Japanese texts.
+//!
+//! Half-width-kana[半角ｶﾅ;HANKAKU KANA] -> normal Katakana
+//!
+//! Wide-alphanumeric[全角英数;ZENKAKU EISU] <-> normal ASCII
+
+
 #[macro_use] extern crate maplit;
 #[macro_use] extern crate lazy_static;
 extern crate regex;
@@ -43,18 +50,27 @@ fn shift_code<F,G>(judge: F, convert: G, src: &str) -> String
     } ).collect()
 }
 
+/// Convert Wide-alphanumeric into normal ASCII  [Ａ -> A]
+/// # Examples
+/// ```
+/// let s3 = "＃＆Ｒｕｓｔ－１．６！";
+/// assert_eq!("#&Rust-1.6!", kana::wide2ascii(s3));
+/// ```
 pub fn wide2ascii(s: &str) -> String {
     shift_code(|x| 0xff00 < x && x < 0xff5f, |x| x - 0xfee0, s)
 }
 
+/// Convert normal ASCII characters into Wide-alphanumeric  [A -> Ａ]
 pub fn ascii2wide(s: &str) -> String {
     shift_code(|x| 0x0020 < x && x < 0x007f, |x| x + 0xfee0, s)
 }
 
+/// Convert Hiragana into Katakana  [あ -> ア]
 pub fn hira2kata(s: &str) -> String {
     shift_code(|x| 0x3041 < x && x < 0x3096, |x| x + 0x0060, s)
 }
 
+/// Convert Katakana into Hiragana  [ア -> あ]
 pub fn kata2hira(s: &str) -> String {
     shift_code(|x| 0x30A1 < x && x < 0x30F6, |x| x - 0x0060, s)
 }
@@ -242,17 +258,6 @@ impl Kana { pub fn init() -> Kana {
     }
 } }
 
-fn consult(table: &HashMap<char,char>, c: &char) -> char {
-    match table.get(c) {
-        None    => *c,
-        Some(x) => *x,
-    }
-}
-
-impl Kana { pub fn half2full(&self, s: &str) -> String {
-    s.chars().map(|c| consult(&self.halves, &c)).collect()
-} }
-
 macro_rules! push_content {
     ($judge:expr, $table:expr, $res:expr, $a:expr, $b:expr) => {
         if $judge($b) {
@@ -264,23 +269,84 @@ macro_rules! push_content {
     };
 }
 
-impl Kana { pub fn half2kana(&self, s: &str) -> String {
-    let mut line = String::with_capacity(s.len());
-    format!("{} ", s).chars().fold(None, |prev, b| {
-        if let Some(a) = prev {
-            push_content!(|b| b == CH_VOICED_HALF,
-                          self.voiced_halves, line, a, b);
-            push_content!(|b| b == CH_SEMIVOICED_HALF,
-                          self.semivoiced_halves, line, a, b);
-            if a == CH_VOICED_HALF ||
-               a == CH_SEMIVOICED_HALF { line.push(CH_SPACE); }
-            line.push(consult(&self.halves, &a));
-        }
-        Some(b)
-    } );
+impl Kana {
+    /// Convert Half-width-kana into normal Katakana with diacritical marks separated  [ｱﾞﾊﾟ -> ア゙パ]  
+    ///
+    /// This method is simple, but tends to cause troubles when rendering.
+    /// In such a case, use half2kana() or execute vsmark2{half|full|combi}() as a post process.
+    /// # Examples
+    /// ```
+    /// use kana::Kana
+    /// let k = Kana::init();
+    /// let s1 = "ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ";
+    /// assert_eq!("マツオ バショウ ア゚", k.half2full(s1));
+    /// ```
+    pub fn half2full(&self, s: &str) -> String {
+        s.chars().map(|c| consult(&self.halves, &c)).collect()
+    }
 
-    line
-} }
+    /// Convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -> アﾞパ]
+    /// # Examples
+    /// ```
+    /// use kana::Kana
+    /// let k = Kana::init();
+    /// let s1 = "ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ";
+    /// assert_eq!("マツオ バショウ ア ゚", k.half2kana(s1));
+    /// ```
+    pub fn half2kana(&self, s: &str) -> String {
+        let mut line = String::with_capacity(s.len());
+        format!("{} ", s).chars().fold(None, |prev, b| {
+            if let Some(a) = prev {
+                push_content!(|b| b == CH_VOICED_HALF,
+                            self.voiced_halves, line, a, b);
+                push_content!(|b| b == CH_SEMIVOICED_HALF,
+                            self.semivoiced_halves, line, a, b);
+                if a == CH_VOICED_HALF ||
+                a == CH_SEMIVOICED_HALF { line.push(CH_SPACE); }
+                line.push(consult(&self.halves, &a));
+            }
+            Some(b)
+        } );
+
+        line
+    }
+
+    /// Combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -> がパ]
+    /// # Examples
+    /// ```
+    /// use kana::Kana
+    /// let k = Kana::init();
+    /// let s2 = "ひ゜ひ゛んは゛";
+    /// assert_eq!("ぴびんば", k.combine(s2));
+    /// ```
+    pub fn combine(&self, s: &str) -> String {
+        let ss = despace(s);
+        let mut line = String::with_capacity(ss.len());
+        format!("{} ", ss).chars().fold(None, |prev, b| {
+            if let Some(a) = prev {
+                push_content!(|b| b == CH_VOICED_HALF ||
+                                b == CH_VOICED_FULL ||
+                                b == CH_VOICED_COMBI,
+                            self.voices, line, a, b);
+                push_content!(|b| b == CH_SEMIVOICED_HALF ||
+                                b == CH_SEMIVOICED_FULL ||
+                                b == CH_SEMIVOICED_COMBI,
+                            self.semivoices, line, a, b);
+                line.push(a);
+            }
+            Some(b)
+        } );
+
+        enspace(&line)
+    }
+}
+
+fn consult(table: &HashMap<char,char>, c: &char) -> char {
+    match table.get(c) {
+        None    => *c,
+        Some(x) => *x,
+    }
+}
 
 fn despace(s: &str) -> String {
     let s_ = &s.replace(VOICED_WITH_SPACE, VOICED_COMBI);
@@ -292,27 +358,6 @@ fn enspace(s: &str) -> String {
     s_.replace(SEMIVOICED_COMBI, SEMIVOICED_WITH_SPACE)
 }
 
-impl Kana { pub fn combine(&self, s0: &str) -> String {
-    let ss = despace(s0);
-    let mut line = String::with_capacity(ss.len());
-    format!("{} ", ss).chars().fold(None, |prev, b| {
-        if let Some(a) = prev {
-            push_content!(|b| b == CH_VOICED_HALF ||
-                              b == CH_VOICED_FULL ||
-                              b == CH_VOICED_COMBI,
-                          self.voices, line, a, b);
-            push_content!(|b| b == CH_SEMIVOICED_HALF ||
-                              b == CH_SEMIVOICED_FULL ||
-                              b == CH_SEMIVOICED_COMBI,
-                          self.semivoices, line, a, b);
-            line.push(a);
-        }
-        Some(b)
-    } );
-
-    enspace(&line)
-} }
-
 fn replace_marks(vmark: &str, svmark: &str, src: &str) -> String {
     lazy_static! {
         static ref RE1: Regex = Regex::new(RE_VOICED_MARKS).unwrap();
@@ -322,23 +367,48 @@ fn replace_marks(vmark: &str, svmark: &str, src: &str) -> String {
     RE2.replace_all(&s_, svmark)
 }
 
+/// Convert all separated Voiced-sound-marks into half-width style "\u{FF9E}"
+/// # Examples
+/// ```
+/// let s = "ひﾟひ゛んは ゙";
+/// assert_eq!("ひﾟひﾞんはﾞ", kana::vsmark2combi(s));
+/// ```
 pub fn vsmark2half(s: &str) -> String {
     replace_marks(&CH_VOICED_HALF.to_string(),
                   &CH_SEMIVOICED_HALF.to_string(), s)
 }
 
+/// Convert all separated Voiced-sound-marks into full-width style "\u{309B}"
+/// # Examples
+/// ```
+/// let s = "ひﾟひ゛んは ゙";
+/// assert_eq!("ひ゜ひ゛んは゛", kana::vsmark2combi(s));
+/// ```
 pub fn vsmark2full(s: &str) -> String {
     replace_marks(&CH_VOICED_FULL.to_string(),
                   &CH_SEMIVOICED_FULL.to_string(), s)
 }
 
+/// Convert all separated Voiced-sound-marks into space+combining style "\u{20}\u{3099}"
+/// # Examples
+/// ```
+/// let s = "ひﾟひ゛んは ゙";
+/// assert_eq!("ひ ゚ひ ゙んは ゙", kana::vsmark2combi(s));
+/// ```
 pub fn vsmark2combi(s: &str) -> String {
     replace_marks(&format!("{}{}", CH_SPACE, CH_VOICED_COMBI),
                   &format!("{}{}", CH_SPACE, CH_SEMIVOICED_COMBI), s)
 }
 
+/// Convert Wide-space into normal space    ["　" -> " "]
 pub fn nowidespace(s: &str) -> String { s.replace("\u{3000}", "\u{20}") }
+
+/// Convert normal space into Wide-space    [" " -> "　"]
 pub fn space2wide(s: &str) -> String { s.replace("\u{20}", "\u{3000}") }
+
+/// Convert Wide-yen into Half-width-yen    ["￥" -> "¥"]
 pub fn nowideyen(s: &str) -> String { s.replace("\u{ffe5}", "\u{a5}") }
+
+/// Convert Half-width-yen into Wide-yen    ["¥" -> "￥"]
 pub fn yen2wide(s: &str) -> String { s.replace("\u{a5}", "\u{ffe5}") }
 

@@ -17,6 +17,8 @@ Unicode has three independent code points for each of the marks.
 In addition to it, we often use special style Latin alphabets and Arabic numbers called Wide-alphanumeric in Japanese texts.
 This small utility converts these codes each other.
 
+[API Reference](https://gemmarx.github.io/unicode-jp-rs/doc/kana/index.html)
+
 ### Example
 Cargo.toml
 ```toml
@@ -82,7 +84,7 @@ convert Half-width-yen into Wide-yen    ["¥" -> "￥"]
 ### Methods of kana::Kana struct:
 - half2full(&self, &str) -> String  
 convert Half-width-kana into normal Katakana with diacritical marks separated  [ｱﾞﾊﾟ -> ア゙パ]  
-This is simple but tends to cause troubles when rendering.
+This method is simple, but tends to cause troubles when rendering.
 In such a case, use half2kana() or execute vsmark2* as post process.
 
 - half2kana(&self, &str) -> String  
