@@ -1,6 +1,7 @@
 Unicode-JP (Rust)
 ----
 [![Build Status](https://travis-ci.org/gemmarx/unicode-jp-rs.svg?branch=master)](https://travis-ci.org/gemmarx/unicode-jp-rs)
+[![crates.io](https://img.shields.io/crates/v/unicode-jp.svg)](https://crates.io/crates/unicode-jp)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 Converters of troublesome characters included in Japanese texts.
@@ -23,7 +24,7 @@ This small utility converts these codes each other.
 Cargo.toml
 ```toml
 [dependencies]
-unicode-jp = { git = "https://github.com/gemmarx/unicode-jp-rs" }
+unicode-jp = "0.1.0"
 ```
 
 src/main.rs

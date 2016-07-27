@@ -4,10 +4,11 @@ name = "unicode-jp"
 version = "0.1.0"
 authors = ["gemmarx <gemmarx@users.noreply.github.com>"]
 
+description = "A library to convert Japanese Half-width-kana[半角ｶﾅ] and Wide-alphanumeric[全角英数] into normal ones."
 repository = "https://github.com/gemmarx/unicode-jp-rs"
 license = "MIT"
 readme = "readme.md"
-description = "A library to convert Japanese Half-width-kana[半角ｶﾅ] and Wide-alphanumeric[全角英数] into normal ones."
+documentation = "https://gemmarx.github.io/unicode-jp-rs/doc/kana/index.html"
 keywords = ["unicode", "japanese", "hankaku", "zenkaku", "kana"]
 
 [lib]
