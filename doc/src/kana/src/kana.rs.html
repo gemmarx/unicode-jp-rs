@@ -456,6 +456,25 @@
 <span id="412">412</span>
 <span id="413">413</span>
 <span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
 </pre><pre class='rust '>
 
 <span class='doccomment'>//! Converters of troublesome characters included in Japanese texts.</span>
@@ -735,7 +754,7 @@
     <span class='doccomment'>/// In such a case, use half2kana() or execute vsmark2{half|full|combi}() as a post process.</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use kana::Kana</span>
+    <span class='doccomment'>/// use kana::Kana;</span>
     <span class='doccomment'>/// let k = Kana::init();</span>
     <span class='doccomment'>/// let s1 = &quot;ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ&quot;;</span>
     <span class='doccomment'>/// assert_eq!(&quot;マツオ バショウ ア゚&quot;, k.half2full(s1));</span>
@@ -747,7 +766,7 @@
     <span class='doccomment'>/// Convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -&gt; アﾞパ]</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use kana::Kana</span>
+    <span class='doccomment'>/// use kana::Kana;</span>
     <span class='doccomment'>/// let k = Kana::init();</span>
     <span class='doccomment'>/// let s1 = &quot;ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ&quot;;</span>
     <span class='doccomment'>/// assert_eq!(&quot;マツオ バショウ ア ゚&quot;, k.half2kana(s1));</span>
@@ -773,7 +792,7 @@
     <span class='doccomment'>/// Combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -&gt; がパ]</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use kana::Kana</span>
+    <span class='doccomment'>/// use kana::Kana;</span>
     <span class='doccomment'>/// let k = Kana::init();</span>
     <span class='doccomment'>/// let s2 = &quot;ひ゜ひ゛んは゛&quot;;</span>
     <span class='doccomment'>/// assert_eq!(&quot;ぴびんば&quot;, k.combine(s2));</span>
@@ -829,8 +848,7 @@
 <span class='doccomment'>/// Convert all separated Voiced-sound-marks into half-width style &quot;\u{FF9E}&quot;</span>
 <span class='doccomment'>/// # Examples</span>
 <span class='doccomment'>/// ```</span>
-<span class='doccomment'>/// let s = &quot;ひﾟひ゛んは ゙&quot;;</span>
-<span class='doccomment'>/// assert_eq!(&quot;ひﾟひﾞんはﾞ&quot;, kana::vsmark2combi(s));</span>
+<span class='doccomment'>/// assert_eq!(&quot;ひﾟひﾞんはﾞ&quot;, kana::vsmark2half(&quot;ひﾟひ゛んは ゙&quot;));</span>
 <span class='doccomment'>/// ```</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>vsmark2half</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
     <span class='ident'>replace_marks</span>(<span class='kw-2'>&amp;</span><span class='ident'>CH_VOICED_HALF</span>.<span class='ident'>to_string</span>(),
@@ -840,8 +858,7 @@
 <span class='doccomment'>/// Convert all separated Voiced-sound-marks into full-width style &quot;\u{309B}&quot;</span>
 <span class='doccomment'>/// # Examples</span>
 <span class='doccomment'>/// ```</span>
-<span class='doccomment'>/// let s = &quot;ひﾟひ゛んは ゙&quot;;</span>
-<span class='doccomment'>/// assert_eq!(&quot;ひ゜ひ゛んは゛&quot;, kana::vsmark2combi(s));</span>
+<span class='doccomment'>/// assert_eq!(&quot;ひ゜ひ゛んは゛&quot;, kana::vsmark2full(&quot;ひﾟひ゛んは ゙&quot;));</span>
 <span class='doccomment'>/// ```</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>vsmark2full</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
     <span class='ident'>replace_marks</span>(<span class='kw-2'>&amp;</span><span class='ident'>CH_VOICED_FULL</span>.<span class='ident'>to_string</span>(),
@@ -851,8 +868,7 @@
 <span class='doccomment'>/// Convert all separated Voiced-sound-marks into space+combining style &quot;\u{20}\u{3099}&quot;</span>
 <span class='doccomment'>/// # Examples</span>
 <span class='doccomment'>/// ```</span>
-<span class='doccomment'>/// let s = &quot;ひﾟひ゛んは ゙&quot;;</span>
-<span class='doccomment'>/// assert_eq!(&quot;ひ ゚ひ ゙んは ゙&quot;, kana::vsmark2combi(s));</span>
+<span class='doccomment'>/// assert_eq!(&quot;ひ ゚ひ ゙んは ゙&quot;, kana::vsmark2combi(&quot;ひﾟひ゛んは ゙&quot;));</span>
 <span class='doccomment'>/// ```</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>vsmark2combi</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
     <span class='ident'>replace_marks</span>(<span class='kw-2'>&amp;</span><span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}{}&quot;</span>, <span class='ident'>CH_SPACE</span>, <span class='ident'>CH_VOICED_COMBI</span>),
@@ -870,6 +886,28 @@
 
 <span class='doccomment'>/// Convert Half-width-yen into Wide-yen    [&quot;¥&quot; -&gt; &quot;￥&quot;]</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>yen2wide</span>(<span class='ident'>s</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> { <span class='ident'>s</span>.<span class='ident'>replace</span>(<span class='string'>&quot;\u{a5}&quot;</span>, <span class='string'>&quot;\u{ffe5}&quot;</span>) }
+
+
+<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
+<span class='kw'>mod</span> <span class='ident'>tests</span> {
+    <span class='kw'>use</span> <span class='kw'>super</span>::<span class='op'>*</span>;
+
+    <span class='attribute'>#[<span class='ident'>test</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>pub_fn_t1</span>() {
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;!rust-0;&quot;</span>, <span class='ident'>wide2ascii</span>(<span class='string'>&quot;！ｒｕｓｔ－０；&quot;</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;！ｒｕｓｔ－０；&quot;</span>, <span class='ident'>ascii2wide</span>(<span class='string'>&quot;!rust-0;&quot;</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;カナ&quot;</span>, <span class='ident'>hira2kata</span>(<span class='string'>&quot;かな&quot;</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;かな&quot;</span>, <span class='ident'>kata2hira</span>(<span class='string'>&quot;カナ&quot;</span>));
+    }
+
+    <span class='attribute'>#[<span class='ident'>test</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>pub_fn_t2</span>() {
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot; &quot;</span>, <span class='ident'>nowidespace</span>(<span class='string'>&quot;　&quot;</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;　&quot;</span>, <span class='ident'>space2wide</span>(<span class='string'>&quot; &quot;</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;¥&quot;</span>, <span class='ident'>nowideyen</span>(<span class='string'>&quot;￥&quot;</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;￥&quot;</span>, <span class='ident'>yen2wide</span>(<span class='string'>&quot;¥&quot;</span>));
+    }
+}
 
 </pre>
 </section>

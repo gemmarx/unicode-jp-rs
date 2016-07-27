@@ -61,7 +61,7 @@ In such a case, use half2kana() or execute vsmark2{half|full|combi}() as a post 
 
 <h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1>
 <pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>kana</span>::<span class='ident'>Kana</span>
+<span class='kw'>use</span> <span class='ident'>kana</span>::<span class='ident'>Kana</span>;
 <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>Kana</span>::<span class='ident'>init</span>();
 <span class='kw'>let</span> <span class='ident'>s1</span> <span class='op'>=</span> <span class='string'>&quot;ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ&quot;</span>;
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;マツオ バショウ ア゚&quot;</span>, <span class='ident'>k</span>.<span class='ident'>half2full</span>(<span class='ident'>s1</span>));</pre>
@@ -70,7 +70,7 @@ In such a case, use half2kana() or execute vsmark2{half|full|combi}() as a post 
 
 <h1 id='examples-1' class='section-header'><a href='#examples-1'>Examples</a></h1>
 <pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>kana</span>::<span class='ident'>Kana</span>
+<span class='kw'>use</span> <span class='ident'>kana</span>::<span class='ident'>Kana</span>;
 <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>Kana</span>::<span class='ident'>init</span>();
 <span class='kw'>let</span> <span class='ident'>s1</span> <span class='op'>=</span> <span class='string'>&quot;ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ&quot;</span>;
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;マツオ バショウ ア ゚&quot;</span>, <span class='ident'>k</span>.<span class='ident'>half2kana</span>(<span class='ident'>s1</span>));</pre>
@@ -79,7 +79,7 @@ In such a case, use half2kana() or execute vsmark2{half|full|combi}() as a post 
 
 <h1 id='examples-2' class='section-header'><a href='#examples-2'>Examples</a></h1>
 <pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>kana</span>::<span class='ident'>Kana</span>
+<span class='kw'>use</span> <span class='ident'>kana</span>::<span class='ident'>Kana</span>;
 <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>Kana</span>::<span class='ident'>init</span>();
 <span class='kw'>let</span> <span class='ident'>s2</span> <span class='op'>=</span> <span class='string'>&quot;ひ゜ひ゛んは゛&quot;</span>;
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;ぴびんば&quot;</span>, <span class='ident'>k</span>.<span class='ident'>combine</span>(<span class='ident'>s2</span>));</pre>
