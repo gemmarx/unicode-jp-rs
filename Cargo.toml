@@ -4,6 +4,12 @@ name = "unicode-jp"
 version = "0.1.0"
 authors = ["gemmarx <gemmarx@users.noreply.github.com>"]
 
+repository = "https://github.com/gemmarx/unicode-jp-rs"
+license = "MIT"
+readme = "readme.md"
+description = "A library to convert Japanese Half-width-kana[半角ｶﾅ] and Wide-alphanumeric[全角英数] into normal ones."
+keywords = ["unicode", "japanese", "hankaku", "zenkaku", "kana"]
+
 [lib]
 name = "kana"
 path = "src/kana.rs"
@@ -13,8 +19,8 @@ name = "converchar-jp"
 path = "src/main.rs"
 
 [dependencies]
-maplit = "*"
-regex = "*"
-clap = { version="*", features = ["yaml"] }
-lazy_static = "*"
+maplit = "0.1.3"
+regex = "0.1.73"
+clap = { version="2.9.3", features = ["yaml"] }
+lazy_static = "0.2.1"
 
