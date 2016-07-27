@@ -278,8 +278,7 @@ impl Kana {
     /// ```
     /// use kana::Kana;
     /// let k = Kana::init();
-    /// let s1 = "ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ";
-    /// assert_eq!("マツオ バショウ ア゚", k.half2full(s1));
+    /// assert_eq!("マツオ バショウ ア゚", k.half2full("ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ"));
     /// ```
     pub fn half2full(&self, s: &str) -> String {
         s.chars().map(|c| consult(&self.halves, &c)).collect()
@@ -290,8 +289,7 @@ impl Kana {
     /// ```
     /// use kana::Kana;
     /// let k = Kana::init();
-    /// let s1 = "ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ";
-    /// assert_eq!("マツオ バショウ ア ゚", k.half2kana(s1));
+    /// assert_eq!("マツオ バショウ ア ゚", k.half2kana("ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ"));
     /// ```
     pub fn half2kana(&self, s: &str) -> String {
         let mut line = String::with_capacity(s.len());
@@ -316,8 +314,7 @@ impl Kana {
     /// ```
     /// use kana::Kana;
     /// let k = Kana::init();
-    /// let s2 = "ひ゜ひ゛んは゛";
-    /// assert_eq!("ぴびんば", k.combine(s2));
+    /// assert_eq!("ぴびんば", k.combine("ひ゜ひ゛んは゛"));
     /// ```
     pub fn combine(&self, s: &str) -> String {
         let ss = despace(s);
@@ -393,8 +390,7 @@ pub fn vsmark2full(s: &str) -> String {
 /// assert_eq!("ひ ゚ひ ゙んは ゙", kana::vsmark2combi("ひﾟひ゛んは ゙"));
 /// ```
 pub fn vsmark2combi(s: &str) -> String {
-    replace_marks(&format!("{}{}", CH_SPACE, CH_VOICED_COMBI),
-                  &format!("{}{}", CH_SPACE, CH_SEMIVOICED_COMBI), s)
+    replace_marks(&VOICED_WITH_SPACE, &SEMIVOICED_WITH_SPACE, s)
 }
 
 /// Convert Wide-space into normal space    ["　" -> " "]

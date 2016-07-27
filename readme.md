@@ -10,7 +10,7 @@ Converters of troublesome characters included in Japanese texts.
 
 If you need canonicalization of text including Japanese, consider to use [unicode_normalization](https://github.com/unicode-rs/unicode-normalization) crate at first.
 NFD, NFKD, NFC and NFKC can be used.
-This crate, however, works with you if you are on a niche such as a need of delicate control of Japanese characters for a restrictive character terminal.
+This crate, however, works with you if you are in a niche such as a need of delicate control of Japanese characters for a restrictive character terminal.
 
 Japanese have two syllabary systems Hiragana and Katakana, and Half-width-kana is another notation system of them.
 In the systems, there are two combinable diacritical marks Voiced-sound-mark and Semi-voiced-sound-mark.
