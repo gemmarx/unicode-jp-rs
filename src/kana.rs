@@ -276,7 +276,7 @@ impl Kana {
     /// In such a case, use half2kana() or execute vsmark2{half|full|combi}() as a post process.
     /// # Examples
     /// ```
-    /// use kana::Kana
+    /// use kana::Kana;
     /// let k = Kana::init();
     /// let s1 = "ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ";
     /// assert_eq!("マツオ バショウ ア゚", k.half2full(s1));
@@ -288,7 +288,7 @@ impl Kana {
     /// Convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -> アﾞパ]
     /// # Examples
     /// ```
-    /// use kana::Kana
+    /// use kana::Kana;
     /// let k = Kana::init();
     /// let s1 = "ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ";
     /// assert_eq!("マツオ バショウ ア ゚", k.half2kana(s1));
@@ -314,7 +314,7 @@ impl Kana {
     /// Combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -> がパ]
     /// # Examples
     /// ```
-    /// use kana::Kana
+    /// use kana::Kana;
     /// let k = Kana::init();
     /// let s2 = "ひ゜ひ゛んは゛";
     /// assert_eq!("ぴびんば", k.combine(s2));
@@ -370,8 +370,7 @@ fn replace_marks(vmark: &str, svmark: &str, src: &str) -> String {
 /// Convert all separated Voiced-sound-marks into half-width style "\u{FF9E}"
 /// # Examples
 /// ```
-/// let s = "ひﾟひ゛んは ゙";
-/// assert_eq!("ひﾟひﾞんはﾞ", kana::vsmark2combi(s));
+/// assert_eq!("ひﾟひﾞんはﾞ", kana::vsmark2half("ひﾟひ゛んは ゙"));
 /// ```
 pub fn vsmark2half(s: &str) -> String {
     replace_marks(&CH_VOICED_HALF.to_string(),
@@ -381,8 +380,7 @@ pub fn vsmark2half(s: &str) -> String {
 /// Convert all separated Voiced-sound-marks into full-width style "\u{309B}"
 /// # Examples
 /// ```
-/// let s = "ひﾟひ゛んは ゙";
-/// assert_eq!("ひ゜ひ゛んは゛", kana::vsmark2combi(s));
+/// assert_eq!("ひ゜ひ゛んは゛", kana::vsmark2full("ひﾟひ゛んは ゙"));
 /// ```
 pub fn vsmark2full(s: &str) -> String {
     replace_marks(&CH_VOICED_FULL.to_string(),
@@ -392,8 +390,7 @@ pub fn vsmark2full(s: &str) -> String {
 /// Convert all separated Voiced-sound-marks into space+combining style "\u{20}\u{3099}"
 /// # Examples
 /// ```
-/// let s = "ひﾟひ゛んは ゙";
-/// assert_eq!("ひ ゚ひ ゙んは ゙", kana::vsmark2combi(s));
+/// assert_eq!("ひ ゚ひ ゙んは ゙", kana::vsmark2combi("ひﾟひ゛んは ゙"));
 /// ```
 pub fn vsmark2combi(s: &str) -> String {
     replace_marks(&format!("{}{}", CH_SPACE, CH_VOICED_COMBI),
@@ -411,4 +408,26 @@ pub fn nowideyen(s: &str) -> String { s.replace("\u{ffe5}", "\u{a5}") }
 
 /// Convert Half-width-yen into Wide-yen    ["¥" -> "￥"]
 pub fn yen2wide(s: &str) -> String { s.replace("\u{a5}", "\u{ffe5}") }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pub_fn_t1() {
+        assert_eq!("!rust-0;", wide2ascii("！ｒｕｓｔ－０；"));
+        assert_eq!("！ｒｕｓｔ－０；", ascii2wide("!rust-0;"));
+        assert_eq!("カナ", hira2kata("かな"));
+        assert_eq!("かな", kata2hira("カナ"));
+    }
+
+    #[test]
+    fn pub_fn_t2() {
+        assert_eq!(" ", nowidespace("　"));
+        assert_eq!("　", space2wide(" "));
+        assert_eq!("¥", nowideyen("￥"));
+        assert_eq!("￥", yen2wide("¥"));
+    }
+}
 
