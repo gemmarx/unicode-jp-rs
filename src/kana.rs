@@ -1,10 +1,29 @@
 
 //! Converters of troublesome characters included in Japanese texts.
 //!
-//! Half-width-kana[半角ｶﾅ;HANKAKU KANA] -> normal Katakana
+//! * Half-width-kana[半角ｶﾅ;HANKAKU KANA] -> normal Katakana
+//! * Wide-alphanumeric[全角英数;ZENKAKU EISU] <-> normal ASCII
 //!
-//! Wide-alphanumeric[全角英数;ZENKAKU EISU] <-> normal ASCII
-
+//! # Example
+//! ```
+//! extern crate kana;
+//! use kana::Kana;
+//! 
+//! fn main() {
+//!     let k = Kana::init();
+//! 
+//!     let s1 = "ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ";
+//!     assert_eq!("マツオ バショウ ア ゚", k.half2kana(s1));
+//!     assert_eq!("マツオ バショウ ア゚", k.half2full(s1));
+//! 
+//!     let s2 = "ひ゜ひ゛んは゛";
+//!     assert_eq!("ぴびんば", k.combine(s2));
+//!     assert_eq!("ひ ゚ひ ゙んは ゙", kana::vsmark2combi(s2));
+//! 
+//!     let s3 = "＃＆Ｒｕｓｔ－１．６！";
+//!     assert_eq!("#&Rust-1.6!", kana::wide2ascii(s3));
+//! }
+//! ```
 
 #[macro_use] extern crate maplit;
 #[macro_use] extern crate lazy_static;
