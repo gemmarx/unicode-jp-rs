@@ -71,24 +71,35 @@ fn shift_code<F,G>(judge: F, convert: G, src: &str) -> String
 /// Convert Wide-alphanumeric into normal ASCII  [Ａ -> A]
 /// # Examples
 /// ```
-/// let s3 = "＃＆Ｒｕｓｔ－１．６！";
-/// assert_eq!("#&Rust-1.6!", kana::wide2ascii(s3));
+/// assert_eq!("#&Rust-1.6!", kana::wide2ascii("＃＆Ｒｕｓｔ－１．６！"));
 /// ```
 pub fn wide2ascii(s: &str) -> String {
     shift_code(|x| 0xff00 < x && x < 0xff5f, |x| x - 0xfee0, s)
 }
 
 /// Convert normal ASCII characters into Wide-alphanumeric  [A -> Ａ]
+/// # Examples
+/// ```
+/// assert_eq!("＃＆Ｒｕｓｔ－１．６！", kana::ascii2wide("#&Rust-1.6!"));
+/// ```
 pub fn ascii2wide(s: &str) -> String {
     shift_code(|x| 0x0020 < x && x < 0x007f, |x| x + 0xfee0, s)
 }
 
 /// Convert Hiragana into Katakana  [あ -> ア]
+/// # Examples
+/// ```
+/// assert_eq!("イロハ", kana::hira2kata("いろは"));
+/// ```
 pub fn hira2kata(s: &str) -> String {
     shift_code(|x| 0x3041 < x && x < 0x3096, |x| x + 0x0060, s)
 }
 
 /// Convert Katakana into Hiragana  [ア -> あ]
+/// # Examples
+/// ```
+/// assert_eq!("いろは", kana::kata2hira("イロハ"));
+/// ```
 pub fn kata2hira(s: &str) -> String {
     shift_code(|x| 0x30A1 < x && x < 0x30F6, |x| x - 0x0060, s)
 }
