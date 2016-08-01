@@ -95,6 +95,7 @@ convert Half-width-kana into normal Katakana with diacritical marks combined  [�
 combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -> がパ]
 
 ## TODO or NOT TODO
+- Voiced-sound-marks -> no space combining style "\u{3099}"
 - Half-width-kana <- normal Katakana
 - (normal/wide)tilde <-> Wave-dash
 
