@@ -47,8 +47,12 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-43' class='srclink' href='../src/kana/src/kana.rs.html#87-89' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-43' class='srclink' href='../src/kana/src/kana.rs.html#94-96' title='goto source code'>[src]</a></span></h1>
 <pre class='rust fn'>pub fn hira2kata(s: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a></pre><div class='docblock'><p>Convert Hiragana into Katakana  [あ -&gt; ア]</p>
+
+<h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1>
+<pre class='rust rust-example-rendered'>
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;イロハ&quot;</span>, <span class='ident'>kana</span>::<span class='ident'>hira2kata</span>(<span class='string'>&quot;いろは&quot;</span>));</pre>
 </div></section>
     <section id='search' class="content hidden"></section>
 
