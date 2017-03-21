@@ -56,71 +56,8 @@ const RE_VOICED_MARKS: &'static str
 const RE_SEMIVOICED_MARKS: &'static str
     = r"(?:\x20??\x{309A}|\x{309C}|\x{FF9F})";
 
-<<<<<<< HEAD
 lazy_static! {
     static ref SEMIVOICED_HALVES: HashMap<char,char> = [
-=======
-fn shift_code<F,G>(judge: F, convert: G, src: &str) -> String
-    where F: Fn(u32) -> bool,
-          G: Fn(u32) -> u32
-{
-    src.chars().map(|c| {
-        let k = c as u32;
-        if judge(k) { char::from_u32(convert(k)).unwrap() } else { c }
-    } ).collect()
-}
-
-/// Convert Wide-alphanumeric into normal ASCII  [Ａ -> A]
-/// # Examples
-/// ```
-/// assert_eq!("#&Rust-1.6!", kana::wide2ascii("＃＆Ｒｕｓｔ－１．６！"));
-/// ```
-pub fn wide2ascii(s: &str) -> String {
-    shift_code(|x| 0xff00 < x && x < 0xff5f, |x| x - 0xfee0, s)
-}
-
-/// Convert normal ASCII characters into Wide-alphanumeric  [A -> Ａ]
-/// # Examples
-/// ```
-/// assert_eq!("＃＆Ｒｕｓｔ－１．６！", kana::ascii2wide("#&Rust-1.6!"));
-/// ```
-pub fn ascii2wide(s: &str) -> String {
-    shift_code(|x| 0x0020 < x && x < 0x007f, |x| x + 0xfee0, s)
-}
-
-/// Convert Hiragana into Katakana  [あ -> ア]
-/// # Examples
-/// ```
-/// assert_eq!("イロハ", kana::hira2kata("いろは"));
-/// ```
-pub fn hira2kata(s: &str) -> String {
-    shift_code(|x| 0x3041 < x && x < 0x3096, |x| x + 0x0060, s)
-}
-
-/// Convert Katakana into Hiragana  [ア -> あ]
-/// # Examples
-/// ```
-/// assert_eq!("いろは", kana::kata2hira("イロハ"));
-/// ```
-pub fn kata2hira(s: &str) -> String {
-    shift_code(|x| 0x30A1 < x && x < 0x30F6, |x| x - 0x0060, s)
-}
-
-pub struct Kana {
-    halves: HashMap<char, char>,
-    voices: HashMap<char, char>,
-    semivoices: HashMap<char, char>,
-    voiced_halves: HashMap<char, char>,
-    semivoiced_halves: HashMap<char, char>,
-}
-
-macro_rules! get_hash { ($t:expr) => {
-    $t.into_iter().cloned().collect::<HashMap<_,_>>()
-}; }
-
-impl Kana { pub fn init() -> Kana {
-    let semivoiced_halves = get_hash! { [
->>>>>>> 63bf6143fb60e406e9994d1664db5520e15e7861
         ('\u{FF8A}', '\u{30D1}'),   //  ﾊ	FF8A	パ	30D1
         ('\u{FF8B}', '\u{30D4}'),   //  ﾋ	FF8B	ピ	30D4
         ('\u{FF8C}', '\u{30D7}'),   //  ﾌ	FF8C	プ	30D7
