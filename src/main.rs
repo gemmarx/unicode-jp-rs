@@ -27,12 +27,11 @@ fn main() {
 fn main_body(args: &ArgMatches, input: Box<BufRead>)
     -> Result<(), Box<Error>>
 {
-    let k = Kana::init();
     for _s in input.lines() {
-        let mut s = try!(_s);
-        if args.is_present("half2full")    { s = k.half2full(&s); }
-        if args.is_present("half2kana")    { s = k.half2kana(&s); }
-        if args.is_present("combine")      { s = k.combine(&s); }
+        let mut s = _s?;
+        if args.is_present("half2full")    { s = half2full(&s); }
+        if args.is_present("half2kana")    { s = half2kana(&s); }
+        if args.is_present("combine")      { s = combine(&s); }
         if args.is_present("hira2kata")    { s = hira2kata(&s); }
         if args.is_present("kata2hira")    { s = kata2hira(&s); }
         if args.is_present("vsmark2half")  { s = vsmark2half(&s); }

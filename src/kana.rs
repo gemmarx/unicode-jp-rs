@@ -7,21 +7,19 @@
 //! # Example
 //! ```
 //! extern crate kana;
-//! use kana::Kana;
+//! use kana::*;
 //! 
 //! fn main() {
-//!     let k = Kana::init();
-//! 
 //!     let s1 = "ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ";
-//!     assert_eq!("マツオ バショウ ア ゚", k.half2kana(s1));
-//!     assert_eq!("マツオ バショウ ア゚", k.half2full(s1));
+//!     assert_eq!("マツオ バショウ ア ゚", half2kana(s1));
+//!     assert_eq!("マツオ バショウ ア゚", half2full(s1));
 //! 
 //!     let s2 = "ひ゜ひ゛んは゛";
-//!     assert_eq!("ぴびんば", k.combine(s2));
-//!     assert_eq!("ひ ゚ひ ゙んは ゙", kana::vsmark2combi(s2));
+//!     assert_eq!("ぴびんば", combine(s2));
+//!     assert_eq!("ひ ゚ひ ゙んは ゙", vsmark2combi(s2));
 //! 
 //!     let s3 = "＃＆Ｒｕｓｔ－１．６！";
-//!     assert_eq!("#&Rust-1.6!", kana::wide2ascii(s3));
+//!     assert_eq!("#&Rust-1.6!", wide2ascii(s3));
 //! }
 //! ```
 
@@ -58,6 +56,10 @@ const RE_VOICED_MARKS: &'static str
 const RE_SEMIVOICED_MARKS: &'static str
     = r"(?:\x20??\x{309A}|\x{309C}|\x{FF9F})";
 
+<<<<<<< HEAD
+lazy_static! {
+    static ref SEMIVOICED_HALVES: HashMap<char,char> = [
+=======
 fn shift_code<F,G>(judge: F, convert: G, src: &str) -> String
     where F: Fn(u32) -> bool,
           G: Fn(u32) -> u32
@@ -118,14 +120,15 @@ macro_rules! get_hash { ($t:expr) => {
 
 impl Kana { pub fn init() -> Kana {
     let semivoiced_halves = get_hash! { [
+>>>>>>> 63bf6143fb60e406e9994d1664db5520e15e7861
         ('\u{FF8A}', '\u{30D1}'),   //  ﾊ	FF8A	パ	30D1
         ('\u{FF8B}', '\u{30D4}'),   //  ﾋ	FF8B	ピ	30D4
         ('\u{FF8C}', '\u{30D7}'),   //  ﾌ	FF8C	プ	30D7
         ('\u{FF8D}', '\u{30DA}'),   //  ﾍ	FF8D	ペ	30DA
         ('\u{FF8E}', '\u{30DD}'),   //  ﾎ	FF8E	ポ	30DD
-    ] };
+    ].into_iter().cloned().collect();
 
-    let voiced_halves = get_hash! { [
+    static ref VOICED_HALVES: HashMap<char,char> = [
         ('\u{FF66}', '\u{30FA}'),   //  ｦ	FF66	ヺ	30FA
         ('\u{FF73}', '\u{30F4}'),   //  ｳ	FF73	ヴ	30F4
         ('\u{FF76}', '\u{30AC}'),   //  ｶ	FF76	ガ	30AC
@@ -149,9 +152,9 @@ impl Kana { pub fn init() -> Kana {
         ('\u{FF8D}', '\u{30D9}'),   //  ﾍ	FF8D	ベ	30D9
         ('\u{FF8E}', '\u{30DC}'),   //  ﾎ	FF8E	ボ	30DC
         ('\u{FF9C}', '\u{30F7}'),   //  ﾜ	FF9C	ヷ	30F7
-    ] };
+    ].into_iter().cloned().collect();
 
-    let semivoices = get_hash! { [
+    static ref SEMIVOICES: HashMap<char,char> = [
         ('\u{30CF}', '\u{30D1}'),   //  ハ	30CF	パ	30D1
         ('\u{30D2}', '\u{30D4}'),   //  ヒ	30D2	ピ	30D4
         ('\u{30D5}', '\u{30D7}'),   //  フ	30D5	プ	30D7
@@ -162,9 +165,9 @@ impl Kana { pub fn init() -> Kana {
         ('\u{3075}', '\u{3077}'),   //  ふ	3075	ぷ	3077
         ('\u{3078}', '\u{307A}'),   //  へ	3078	ぺ	307A
         ('\u{307B}', '\u{307D}'),   //  ほ	307B	ぽ	307D
-    ] };
+    ].into_iter().cloned().collect();
 
-    let voices = get_hash! { [
+    static ref VOICES: HashMap<char,char> = [
         ('\u{30A6}', '\u{30F4}'),   //  ウ	30A6	ヴ	30F4
         ('\u{30AB}', '\u{30AC}'),   //  カ	30AB	ガ	30AC
         ('\u{30AD}', '\u{30AE}'),   //  キ	30AD	ギ	30AE
@@ -212,9 +215,9 @@ impl Kana { pub fn init() -> Kana {
         ('\u{3078}', '\u{3079}'),   //  へ	3078	べ	3079
         ('\u{307B}', '\u{307C}'),   //  ほ	307B	ぼ	307C
         ('\u{309D}', '\u{309E}'),   //  ゝ	309D	ゞ	309E
-    ] };
+    ].into_iter().cloned().collect();
 
-    let halves = get_hash! { [
+    static ref HALVES: HashMap<char,char> = [
         ('\u{FF61}', '\u{3002}'),   //  ｡	FF61	。	3002
         ('\u{FF62}', '\u{300C}'),   //  ｢	FF62	「	300C
         ('\u{FF63}', '\u{300D}'),   //  ｣	FF63	」	300D
@@ -280,16 +283,54 @@ impl Kana { pub fn init() -> Kana {
         ('\u{FF9F}', '\u{309A}'),   //  ﾟ	FF9F	 ゚	309A
         //('\u{FF9E}', '\u{309B}'),   //  ﾞ	FF9E	゛	309B
         //('\u{FF9F}', '\u{309C}'),   //  ﾟ	FF9F	゜	309C
-    ] };
+    ].into_iter().cloned().collect();
+}
 
-    Kana {
-        halves: halves,
-        voices: voices,
-        semivoices: semivoices,
-        voiced_halves: voiced_halves,
-        semivoiced_halves: semivoiced_halves,
-    }
-} }
+fn shift_code<F,G>(judge: F, convert: G, src: &str) -> String
+    where F: Fn(u32) -> bool,
+          G: Fn(u32) -> u32
+{
+    src.chars().map(|c| {
+        let k = c as u32;
+        if judge(k) { char::from_u32(convert(k)).unwrap() } else { c }
+    } ).collect()
+}
+
+/// Convert Wide-alphanumeric into normal ASCII  [Ａ -> A]
+/// # Examples
+/// ```
+/// assert_eq!("#&Rust-1.6!", kana::wide2ascii("＃＆Ｒｕｓｔ－１．６！"));
+/// ```
+pub fn wide2ascii(s: &str) -> String {
+    shift_code(|x| 0xff00 < x && x < 0xff5f, |x| x - 0xfee0, s)
+}
+
+/// Convert normal ASCII characters into Wide-alphanumeric  [A -> Ａ]
+/// # Examples
+/// ```
+/// assert_eq!("＃＆Ｒｕｓｔ－１．６！", kana::ascii2wide("#&Rust-1.6!"));
+/// ```
+pub fn ascii2wide(s: &str) -> String {
+    shift_code(|x| 0x0020 < x && x < 0x007f, |x| x + 0xfee0, s)
+}
+
+/// Convert Hiragana into Katakana  [あ -> ア]
+/// # Examples
+/// ```
+/// assert_eq!("イロハ", kana::hira2kata("いろは"));
+/// ```
+pub fn hira2kata(s: &str) -> String {
+    shift_code(|x| 0x3041 < x && x < 0x3096, |x| x + 0x0060, s)
+}
+
+/// Convert Katakana into Hiragana  [ア -> あ]
+/// # Examples
+/// ```
+/// assert_eq!("いろは", kana::kata2hira("イロハ"));
+/// ```
+pub fn kata2hira(s: &str) -> String {
+    shift_code(|x| 0x30A1 < x && x < 0x30F6, |x| x - 0x0060, s)
+}
 
 macro_rules! push_content {
     ($judge:expr, $table:expr, $res:expr, $a:expr, $b:expr) => {
@@ -302,73 +343,65 @@ macro_rules! push_content {
     };
 }
 
-impl Kana {
-    /// Convert Half-width-kana into normal Katakana with diacritical marks separated  [ｱﾞﾊﾟ -> ア゙パ]  
-    ///
-    /// This method is simple, but tends to cause troubles when rendering.
-    /// In such a case, use half2kana() or execute vsmark2{half|full|combi}() as a post process.
-    /// # Examples
-    /// ```
-    /// use kana::Kana;
-    /// let k = Kana::init();
-    /// assert_eq!("マツオ バショウ ア゚", k.half2full("ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ"));
-    /// ```
-    pub fn half2full(&self, s: &str) -> String {
-        s.chars().map(|c| consult(&self.halves, &c)).collect()
-    }
+/// Convert Half-width-kana into normal Katakana with diacritical marks separated  [ｱﾞﾊﾟ -> ア゙パ]  
+///
+/// This method is simple, but tends to cause troubles when rendering.
+/// In such a case, use half2kana() or execute vsmark2{half|full|combi}() as a post process.
+/// # Examples
+/// ```
+/// assert_eq!("マツオ バショウ ア゚", kana::half2full("ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ"));
+/// ```
+pub fn half2full(s: &str) -> String {
+    s.chars().map(|c| consult(&HALVES, &c)).collect()
+}
 
-    /// Convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -> アﾞパ]
-    /// # Examples
-    /// ```
-    /// use kana::Kana;
-    /// let k = Kana::init();
-    /// assert_eq!("マツオ バショウ ア ゚", k.half2kana("ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ"));
-    /// ```
-    pub fn half2kana(&self, s: &str) -> String {
-        let mut line = String::with_capacity(s.len());
-        format!("{} ", s).chars().fold(None, |prev, b| {
-            if let Some(a) = prev {
-                push_content!(|b| b == CH_VOICED_HALF,
-                            self.voiced_halves, line, a, b);
-                push_content!(|b| b == CH_SEMIVOICED_HALF,
-                            self.semivoiced_halves, line, a, b);
-                if a == CH_VOICED_HALF ||
+/// Convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -> アﾞパ]
+/// # Examples
+/// ```
+/// assert_eq!("マツオ バショウ ア ゚", kana::half2kana("ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ"));
+/// ```
+pub fn half2kana(s: &str) -> String {
+    let mut line = String::with_capacity(s.len());
+    format!("{} ", s).chars().fold(None, |prev, b| {
+        if let Some(a) = prev {
+            push_content!(|b| b == CH_VOICED_HALF,
+                            VOICED_HALVES, line, a, b);
+            push_content!(|b| b == CH_SEMIVOICED_HALF,
+                            SEMIVOICED_HALVES, line, a, b);
+            if a == CH_VOICED_HALF ||
                 a == CH_SEMIVOICED_HALF { line.push(CH_SPACE); }
-                line.push(consult(&self.halves, &a));
-            }
-            Some(b)
-        } );
+            line.push(consult(&HALVES, &a));
+        }
+        Some(b)
+    } );
 
-        line
-    }
+    line
+}
 
-    /// Combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -> がパ]
-    /// # Examples
-    /// ```
-    /// use kana::Kana;
-    /// let k = Kana::init();
-    /// assert_eq!("ぴびんば", k.combine("ひ゜ひ゛んは゛"));
-    /// ```
-    pub fn combine(&self, s: &str) -> String {
-        let ss = despace(s);
-        let mut line = String::with_capacity(ss.len());
-        format!("{} ", ss).chars().fold(None, |prev, b| {
-            if let Some(a) = prev {
-                push_content!(|b| b == CH_VOICED_HALF ||
+/// Combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -> がパ]
+/// # Examples
+/// ```
+/// assert_eq!("ぴびんば", kana::combine("ひ゜ひ゛んは゛"));
+/// ```
+pub fn combine(s: &str) -> String {
+    let ss = despace(s);
+    let mut line = String::with_capacity(ss.len());
+    format!("{} ", ss).chars().fold(None, |prev, b| {
+        if let Some(a) = prev {
+            push_content!(|b| b == CH_VOICED_HALF ||
                                 b == CH_VOICED_FULL ||
                                 b == CH_VOICED_COMBI,
-                            self.voices, line, a, b);
-                push_content!(|b| b == CH_SEMIVOICED_HALF ||
+                            VOICES, line, a, b);
+            push_content!(|b| b == CH_SEMIVOICED_HALF ||
                                 b == CH_SEMIVOICED_FULL ||
                                 b == CH_SEMIVOICED_COMBI,
-                            self.semivoices, line, a, b);
-                line.push(a);
-            }
-            Some(b)
-        } );
+                            SEMIVOICES, line, a, b);
+            line.push(a);
+        }
+        Some(b)
+    } );
 
-        enspace(&line)
-    }
+    enspace(&line)
 }
 
 fn consult(table: &HashMap<char,char>, c: &char) -> char {
@@ -457,6 +490,14 @@ mod tests {
         assert_eq!("　", space2wide(" "));
         assert_eq!("¥", nowideyen("￥"));
         assert_eq!("￥", yen2wide("¥"));
+    }
+
+    #[test]
+    fn kana_t1() {
+        assert_eq!(Some(&'\u{30A2}'), HALVES.get(&'\u{FF71}'));
+        assert_eq!("ガナ", half2full("ｶﾞﾅ"));
+        assert_eq!("ガナ", half2kana("ｶﾞﾅ"));
+        assert_eq!("がな", combine("か゛な"));
     }
 }
 

@@ -24,27 +24,25 @@ This small utility converts these codes each other.
 Cargo.toml
 ```toml
 [dependencies]
-unicode-jp = "0.2.0"
+unicode-jp = "0.3.0"
 ```
 
 src/main.rs
 ```rust
 extern crate kana;
-use kana::Kana;
+use kana::*;
 
 fn main() {
-    let k = Kana::init();
-
     let s1 = "ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ";
-    assert_eq!("マツオ バショウ ア ゚", k.half2kana(s1));
-    assert_eq!("マツオ バショウ ア゚", k.half2full(s1));
+    assert_eq!("マツオ バショウ ア ゚", half2kana(s1));
+    assert_eq!("マツオ バショウ ア゚", half2full(s1));
 
     let s2 = "ひ゜ひ゛んは゛";
-    assert_eq!("ぴびんば", k.combine(s2));
-    assert_eq!("ひ ゚ひ ゙んは ゙", kana::vsmark2combi(s2));
+    assert_eq!("ぴびんば", combine(s2));
+    assert_eq!("ひ ゚ひ ゙んは ゙", vsmark2combi(s2));
 
     let s3 = "＃＆Ｒｕｓｔ－１．６！";
-    assert_eq!("#&Rust-1.6!", kana::wide2ascii(s3));
+    assert_eq!("#&Rust-1.6!", wide2ascii(s3));
 }
 ```
 
@@ -54,6 +52,17 @@ convert Wide-alphanumeric into normal ASCII  [Ａ -> A]
 
 - ascii2wide(&str) -> String  
 convert normal ASCII characters into Wide-alphanumeric  [A -> Ａ]
+
+- half2full(&str) -> String  
+convert Half-width-kana into normal Katakana with diacritical marks separated  [ｱﾞﾊﾟ -> ア゙パ]  
+This method is simple, but tends to cause troubles when rendering.
+In such a case, use half2kana() or execute vsmark2{full|half|combi} as post process.
+
+- half2kana(&str) -> String  
+convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -> アﾞパ]
+
+- combine(&str) -> String  
+combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -> がパ]
 
 - hira2kata(&str) -> String  
 convert Hiragana into Katakana  [あ -> ア]
@@ -81,18 +90,6 @@ convert Wide-yen into Half-width-yen    ["￥" -> "¥"]
 
 - yen2wide(&str) -> String  
 convert Half-width-yen into Wide-yen    ["¥" -> "￥"]
-
-### Methods of kana::Kana struct:
-- half2full(&self, &str) -> String  
-convert Half-width-kana into normal Katakana with diacritical marks separated  [ｱﾞﾊﾟ -> ア゙パ]  
-This method is simple, but tends to cause troubles when rendering.
-In such a case, use half2kana() or execute vsmark2* as post process.
-
-- half2kana(&self, &str) -> String  
-convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -> アﾞパ]
-
-- combine(&self, &str) -> String  
-combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -> がパ]
 
 ## TODO or NOT TODO
 - Voiced-sound-marks -> no space combining style "\u{3099}"
