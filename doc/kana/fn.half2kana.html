@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `nowidespace` fn in crate `kana`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, nowidespace">
+    <meta name="description" content="API documentation for the Rust `half2kana` fn in crate `kana`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, half2kana">
 
-    <title>kana::nowidespace - Rust</title>
+    <title>kana::half2kana - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='index.html'>kana</a></p><script>window.sidebarCurrent = {name: 'nowidespace', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='index.html'>kana</a></p><script>window.sidebarCurrent = {name: 'half2kana', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -44,12 +44,16 @@
     </nav>
 
     <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'>Function <a href='index.html'>kana</a>::<wbr><a class="fn" href=''>nowidespace</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Function <a href='index.html'>kana</a>::<wbr><a class="fn" href=''>half2kana</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/kana/kana.rs.html#400' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn nowidespace(s: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></pre><div class='docblock'><p>Convert Wide-space into normal space    [&quot;　&quot; -&gt; &quot; &quot;]</p>
+               </span><a class='srclink' href='../src/kana/kana.rs.html#300-316' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn half2kana(s: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></pre><div class='docblock'><p>Convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -&gt; アﾞパ]</p>
+
+<h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;マツオ バショウ ア ゚&quot;</span>, <span class="ident">kana</span>::<span class="ident">half2kana</span>(<span class="string">&quot;ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ&quot;</span>));</pre>
 </div></section>
     <section id='search' class="content hidden"></section>
 

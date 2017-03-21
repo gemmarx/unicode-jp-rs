@@ -9,6 +9,7 @@
 
     <title>kana - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -43,11 +44,11 @@
     </nav>
 
     <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>kana</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>kana</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-0' class='srclink' href='../src/kana/src/kana.rs.html#2-461' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/kana/kana.rs.html#2-439' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Converters of troublesome characters included in Japanese texts.</p>
 
 <ul>
@@ -56,108 +57,119 @@
 </ul>
 
 <h1 id='example' class='section-header'><a href='#example'>Example</a></h1>
-<pre class='rust rust-example-rendered'>
-<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>kana</span>;
-<span class='kw'>use</span> <span class='ident'>kana</span>::<span class='ident'>Kana</span>;
+<pre class="rust rust-example-rendered">
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">kana</span>;
+<span class="kw">use</span> <span class="ident">kana</span>::<span class="kw-2">*</span>;
  
-<span class='kw'>fn</span> <span class='ident'>main</span>() {
-    <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>Kana</span>::<span class='ident'>init</span>();
+<span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="kw">let</span> <span class="ident">s1</span> <span class="op">=</span> <span class="string">&quot;ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ&quot;</span>;
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;マツオ バショウ ア ゚&quot;</span>, <span class="ident">half2kana</span>(<span class="ident">s1</span>));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;マツオ バショウ ア゚&quot;</span>, <span class="ident">half2full</span>(<span class="ident">s1</span>));
  
-    <span class='kw'>let</span> <span class='ident'>s1</span> <span class='op'>=</span> <span class='string'>&quot;ﾏﾂｵ ﾊﾞｼｮｳ ｱﾟ&quot;</span>;
-    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;マツオ バショウ ア ゚&quot;</span>, <span class='ident'>k</span>.<span class='ident'>half2kana</span>(<span class='ident'>s1</span>));
-    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;マツオ バショウ ア゚&quot;</span>, <span class='ident'>k</span>.<span class='ident'>half2full</span>(<span class='ident'>s1</span>));
+    <span class="kw">let</span> <span class="ident">s2</span> <span class="op">=</span> <span class="string">&quot;ひ゜ひ゛んは゛&quot;</span>;
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;ぴびんば&quot;</span>, <span class="ident">combine</span>(<span class="ident">s2</span>));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;ひ ゚ひ ゙んは ゙&quot;</span>, <span class="ident">vsmark2combi</span>(<span class="ident">s2</span>));
  
-    <span class='kw'>let</span> <span class='ident'>s2</span> <span class='op'>=</span> <span class='string'>&quot;ひ゜ひ゛んは゛&quot;</span>;
-    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;ぴびんば&quot;</span>, <span class='ident'>k</span>.<span class='ident'>combine</span>(<span class='ident'>s2</span>));
-    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;ひ ゚ひ ゙んは ゙&quot;</span>, <span class='ident'>kana</span>::<span class='ident'>vsmark2combi</span>(<span class='ident'>s2</span>));
- 
-    <span class='kw'>let</span> <span class='ident'>s3</span> <span class='op'>=</span> <span class='string'>&quot;＃＆Ｒｕｓｔ－１．６！&quot;</span>;
-    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='string'>&quot;#&amp;Rust-1.6!&quot;</span>, <span class='ident'>kana</span>::<span class='ident'>wide2ascii</span>(<span class='ident'>s3</span>));
+    <span class="kw">let</span> <span class="ident">s3</span> <span class="op">=</span> <span class="string">&quot;＃＆Ｒｕｓｔ－１．６！&quot;</span>;
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;#&amp;Rust-1.6!&quot;</span>, <span class="ident">wide2ascii</span>(<span class="ident">s3</span>));
 }</pre>
-</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+</div><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='struct' href='struct.Kana.html'
-                                  title='kana::Kana'>Kana</a></td>
-                           <td class='docblock short'>
-                                
-                           </td>
-                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class='fn' href='fn.ascii2wide.html'
-                                  title='kana::ascii2wide'>ascii2wide</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.ascii2wide.html"
+                                  title='fn kana::ascii2wide'>ascii2wide</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert normal ASCII characters into Wide-alphanumeric  [A -&gt; Ａ]</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.hira2kata.html'
-                                  title='kana::hira2kata'>hira2kata</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.combine.html"
+                                  title='fn kana::combine'>combine</a></td>
+                           <td class='docblock-short'>
+                                <p>Combine base characters and diacritical marks on Hiragana/Katakana [かﾞハ゜ -&gt; がパ]</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.half2full.html"
+                                  title='fn kana::half2full'>half2full</a></td>
+                           <td class='docblock-short'>
+                                <p>Convert Half-width-kana into normal Katakana with diacritical marks separated  [ｱﾞﾊﾟ -&gt; ア゙パ]</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.half2kana.html"
+                                  title='fn kana::half2kana'>half2kana</a></td>
+                           <td class='docblock-short'>
+                                <p>Convert Half-width-kana into normal Katakana with diacritical marks combined  [ｱﾞﾊﾟ -&gt; アﾞパ]</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.hira2kata.html"
+                                  title='fn kana::hira2kata'>hira2kata</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert Hiragana into Katakana  [あ -&gt; ア]</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.kata2hira.html'
-                                  title='kana::kata2hira'>kata2hira</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.kata2hira.html"
+                                  title='fn kana::kata2hira'>kata2hira</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert Katakana into Hiragana  [ア -&gt; あ]</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.nowidespace.html'
-                                  title='kana::nowidespace'>nowidespace</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.nowidespace.html"
+                                  title='fn kana::nowidespace'>nowidespace</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert Wide-space into normal space    [&quot;　&quot; -&gt; &quot; &quot;]</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.nowideyen.html'
-                                  title='kana::nowideyen'>nowideyen</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.nowideyen.html"
+                                  title='fn kana::nowideyen'>nowideyen</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert Wide-yen into Half-width-yen    [&quot;￥&quot; -&gt; &quot;¥&quot;]</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.space2wide.html'
-                                  title='kana::space2wide'>space2wide</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.space2wide.html"
+                                  title='fn kana::space2wide'>space2wide</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert normal space into Wide-space    [&quot; &quot; -&gt; &quot;　&quot;]</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.vsmark2combi.html'
-                                  title='kana::vsmark2combi'>vsmark2combi</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.vsmark2combi.html"
+                                  title='fn kana::vsmark2combi'>vsmark2combi</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert all separated Voiced-sound-marks into space+combining style &quot;\u{20}\u{3099}&quot;</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.vsmark2full.html'
-                                  title='kana::vsmark2full'>vsmark2full</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.vsmark2full.html"
+                                  title='fn kana::vsmark2full'>vsmark2full</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert all separated Voiced-sound-marks into full-width style &quot;\u{309B}&quot;</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.vsmark2half.html'
-                                  title='kana::vsmark2half'>vsmark2half</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.vsmark2half.html"
+                                  title='fn kana::vsmark2half'>vsmark2half</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert all separated Voiced-sound-marks into half-width style &quot;\u{FF9E}&quot;</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.wide2ascii.html'
-                                  title='kana::wide2ascii'>wide2ascii</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.wide2ascii.html"
+                                  title='fn kana::wide2ascii'>wide2ascii</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert Wide-alphanumeric into normal ASCII  [Ａ -&gt; A]</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='fn' href='fn.yen2wide.html'
-                                  title='kana::yen2wide'>yen2wide</a></td>
-                           <td class='docblock short'>
+                           <td><a class="fn" href="fn.yen2wide.html"
+                                  title='fn kana::yen2wide'>yen2wide</a></td>
+                           <td class='docblock-short'>
                                 <p>Convert Half-width-yen into Wide-yen    [&quot;¥&quot; -&gt; &quot;￥&quot;]</p>
                            </td>
                        </tr></table></section>
@@ -216,11 +228,9 @@
     <script>
         window.rootPath = "../";
         window.currentCrate = "kana";
-        window.playgroundUrl = "";
     </script>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
-    
     <script defer src="../search-index.js"></script>
 </body>
 </html>
