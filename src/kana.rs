@@ -254,19 +254,19 @@ pub fn ascii2wide(s: &str) -> String {
 /// Convert Hiragana into Katakana  [あ -> ア]
 /// # Examples
 /// ```
-/// assert_eq!("イロハ", kana::hira2kata("いろは"));
+/// assert_eq!("イロハァィゥヴヵヶ", kana::hira2kata("いろはぁぃぅゔゕゖ"));
 /// ```
 pub fn hira2kata(s: &str) -> String {
-    shift_code(|x| 0x3041 < x && x < 0x3096, |x| x + 0x0060, s)
+    shift_code(|x| 0x3041 <= x && x <= 0x3096, |x| x + 0x0060, s)
 }
 
 /// Convert Katakana into Hiragana  [ア -> あ]
 /// # Examples
 /// ```
-/// assert_eq!("いろは", kana::kata2hira("イロハ"));
+/// assert_eq!("いろはぁぃぅゔゕゖ", kana::kata2hira("イロハァィゥヴヵヶ"));
 /// ```
 pub fn kata2hira(s: &str) -> String {
-    shift_code(|x| 0x30A1 < x && x < 0x30F6, |x| x - 0x0060, s)
+    shift_code(|x| 0x30A1 <= x && x <= 0x30F6, |x| x - 0x0060, s)
 }
 
 macro_rules! push_content {
