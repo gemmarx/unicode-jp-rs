@@ -24,8 +24,8 @@ fn main() {
     }
 }
 
-fn main_body(args: &ArgMatches, input: Box<BufRead>)
-    -> Result<(), Box<Error>>
+fn main_body(args: &ArgMatches, input: Box<dyn BufRead>)
+    -> Result<(), Box<dyn Error>>
 {
     for _s in input.lines() {
         let mut s = _s?;
@@ -48,14 +48,14 @@ fn main_body(args: &ArgMatches, input: Box<BufRead>)
     Ok(())
 }
 
-fn get_input_clap(args: &ArgMatches) -> Box<BufRead> {
+fn get_input_clap(args: &ArgMatches) -> Box<dyn BufRead> {
     if args.is_present("INPUT") {
         let f = fs::File::open(args.value_of("INPUT").unwrap())
                 .unwrap_or_else(|e|err!(e));
-        Box::new(io::BufReader::new(f)) as Box<BufRead>
+        Box::new(io::BufReader::new(f)) as Box<dyn BufRead>
     } else {
         lazy_static! { static ref STDIN: io::Stdin = io::stdin(); }
-        Box::new(STDIN.lock()) as Box<BufRead>
+        Box::new(STDIN.lock()) as Box<dyn BufRead>
     }
 }
 
