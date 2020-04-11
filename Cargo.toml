@@ -1,7 +1,7 @@
 
 [package]
 name = "unicode-jp"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["gemmarx <gemmarx@users.noreply.github.com>"]
 
 description = "A library to convert Japanese Half-width-kana[半角ｶﾅ] and Wide-alphanumeric[全角英数] into normal ones."
@@ -20,7 +20,7 @@ name = "converchar-jp"
 path = "src/main.rs"
 
 [dependencies]
-regex = "0.1.73"
-clap = { version="2.9.3", features = ["yaml"] }
-lazy_static = "0.2.1"
+regex = "0.1.80"
+clap = { version="2.33.0", features = ["yaml"] }
+lazy_static = "1.4.0"
 
