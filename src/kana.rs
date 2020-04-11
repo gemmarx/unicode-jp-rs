@@ -63,7 +63,7 @@ lazy_static! {
         ('\u{FF8C}', '\u{30D7}'),   //  ﾌ	FF8C	プ	30D7
         ('\u{FF8D}', '\u{30DA}'),   //  ﾍ	FF8D	ペ	30DA
         ('\u{FF8E}', '\u{30DD}'),   //  ﾎ	FF8E	ポ	30DD
-    ].into_iter().cloned().collect();
+    ].iter().copied().collect();
 
     static ref VOICED_HALVES: HashMap<char,char> = [
         ('\u{FF66}', '\u{30FA}'),   //  ｦ	FF66	ヺ	30FA
@@ -89,7 +89,7 @@ lazy_static! {
         ('\u{FF8D}', '\u{30D9}'),   //  ﾍ	FF8D	ベ	30D9
         ('\u{FF8E}', '\u{30DC}'),   //  ﾎ	FF8E	ボ	30DC
         ('\u{FF9C}', '\u{30F7}'),   //  ﾜ	FF9C	ヷ	30F7
-    ].into_iter().cloned().collect();
+    ].iter().copied().collect();
 
     static ref SEMIVOICES: HashMap<char,char> = [
         ('\u{30CF}', '\u{30D1}'),   //  ハ	30CF	パ	30D1
@@ -102,7 +102,7 @@ lazy_static! {
         ('\u{3075}', '\u{3077}'),   //  ふ	3075	ぷ	3077
         ('\u{3078}', '\u{307A}'),   //  へ	3078	ぺ	307A
         ('\u{307B}', '\u{307D}'),   //  ほ	307B	ぽ	307D
-    ].into_iter().cloned().collect();
+    ].iter().copied().collect();
 
     static ref VOICES: HashMap<char,char> = [
         ('\u{30A6}', '\u{30F4}'),   //  ウ	30A6	ヴ	30F4
@@ -152,7 +152,7 @@ lazy_static! {
         ('\u{3078}', '\u{3079}'),   //  へ	3078	べ	3079
         ('\u{307B}', '\u{307C}'),   //  ほ	307B	ぼ	307C
         ('\u{309D}', '\u{309E}'),   //  ゝ	309D	ゞ	309E
-    ].into_iter().cloned().collect();
+    ].iter().copied().collect();
 
     static ref HALVES: HashMap<char,char> = [
         ('\u{FF61}', '\u{3002}'),   //  ｡	FF61	。	3002
@@ -220,7 +220,7 @@ lazy_static! {
         ('\u{FF9F}', '\u{309A}'),   //  ﾟ	FF9F	 ゚	309A
         //('\u{FF9E}', '\u{309B}'),   //  ﾞ	FF9E	゛	309B
         //('\u{FF9F}', '\u{309C}'),   //  ﾟ	FF9F	゜	309C
-    ].into_iter().cloned().collect();
+    ].iter().copied().collect();
 }
 
 fn shift_code<F,G>(judge: F, convert: G, src: &str) -> String
@@ -437,4 +437,3 @@ mod tests {
         assert_eq!("がな", combine("か゛な"));
     }
 }
-
