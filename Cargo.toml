@@ -20,7 +20,7 @@ name = "converchar-jp"
 path = "src/main.rs"
 
 [dependencies]
-regex = "0.1.80"
+regex = "1.10.2"
 clap = { version="2.33.0", features = ["yaml"] }
 lazy_static = "1.4.0"
 

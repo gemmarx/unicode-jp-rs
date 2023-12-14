@@ -364,7 +364,7 @@ fn replace_marks(vmark: &str, svmark: &str, src: &str) -> String {
         static ref RE2: Regex = Regex::new(RE_SEMIVOICED_MARKS).unwrap();
     }
     let s_ = RE1.replace_all(src, vmark);
-    RE2.replace_all(&s_, svmark)
+    RE2.replace_all(&s_, svmark).into_owned()
 }
 
 /// Convert all separated Voiced-sound-marks into half-width style "\u{FF9E}"
