@@ -23,9 +23,6 @@
 //! }
 //! ```
 
-#[macro_use] extern crate lazy_static;
-extern crate regex;
-
 use std::char;
 use std::collections::HashMap;
 use regex::Regex;
@@ -56,7 +53,7 @@ const RE_VOICED_MARKS: &str
 const RE_SEMIVOICED_MARKS: &str
     = r"(?:\x20??\x{309A}|\x{309C}|\x{FF9F})";
 
-lazy_static! {
+lazy_static::lazy_static! {
     static ref SEMIVOICED_HALVES: HashMap<char,char> = [
         ('\u{FF8A}', '\u{30D1}'),   //  ﾊ	FF8A	パ	30D1
         ('\u{FF8B}', '\u{30D4}'),   //  ﾋ	FF8B	ピ	30D4
@@ -359,7 +356,7 @@ fn enspace(s: &str) -> String {
 }
 
 fn replace_marks(vmark: &str, svmark: &str, src: &str) -> String {
-    lazy_static! {
+    lazy_static::lazy_static! {
         static ref RE1: Regex = Regex::new(RE_VOICED_MARKS).unwrap();
         static ref RE2: Regex = Regex::new(RE_SEMIVOICED_MARKS).unwrap();
     }

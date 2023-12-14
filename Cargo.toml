@@ -3,6 +3,7 @@
 name = "unicode-jp"
 version = "0.4.0"
 authors = ["gemmarx <gemmarx@users.noreply.github.com>"]
+edition = "2021"
 
 description = "A library to convert Japanese Half-width-kana[半角ｶﾅ] and Wide-alphanumeric[全角英数] into normal ones."
 repository = "https://github.com/gemmarx/unicode-jp-rs"
@@ -21,6 +22,5 @@ path = "src/main.rs"
 
 [dependencies]
 regex = "1.10.2"
-clap = { version="2.33.0", features = ["yaml"] }
+clap = { version="4.4.11", features=["derive"] }
 lazy_static = "1.4.0"
-
