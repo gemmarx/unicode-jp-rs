@@ -23,9 +23,6 @@
 //! }
 //! ```
 
-#[macro_use] extern crate lazy_static;
-extern crate regex;
-
 use std::char;
 use std::collections::HashMap;
 use regex::Regex;
@@ -46,17 +43,17 @@ const CH_VOICED_HALF:      char = '\u{FF9E}';
 const CH_SEMIVOICED_HALF:  char = '\u{FF9F}';
 const CH_SPACE:            char = '\u{20}';
 
-const VOICED_COMBI:          &'static str = "\u{3099}";
-const SEMIVOICED_COMBI:      &'static str = "\u{309A}";
-const VOICED_WITH_SPACE:     &'static str = "\u{20}\u{3099}";
-const SEMIVOICED_WITH_SPACE: &'static str = "\u{20}\u{309A}";
+const VOICED_COMBI:          &str = "\u{3099}";
+const SEMIVOICED_COMBI:      &str = "\u{309A}";
+const VOICED_WITH_SPACE:     &str = "\u{20}\u{3099}";
+const SEMIVOICED_WITH_SPACE: &str = "\u{20}\u{309A}";
 
-const RE_VOICED_MARKS: &'static str
+const RE_VOICED_MARKS: &str
     = r"(?:\x20??\x{3099}|\x{309B}|\x{FF9E})";
-const RE_SEMIVOICED_MARKS: &'static str
+const RE_SEMIVOICED_MARKS: &str
     = r"(?:\x20??\x{309A}|\x{309C}|\x{FF9F})";
 
-lazy_static! {
+lazy_static::lazy_static! {
     static ref SEMIVOICED_HALVES: HashMap<char,char> = [
         ('\u{FF8A}', '\u{30D1}'),   //  ﾊ	FF8A	パ	30D1
         ('\u{FF8B}', '\u{30D4}'),   //  ﾋ	FF8B	ピ	30D4
@@ -257,7 +254,7 @@ pub fn ascii2wide(s: &str) -> String {
 /// assert_eq!("イロハァィゥヴヵヶ", kana::hira2kata("いろはぁぃぅゔゕゖ"));
 /// ```
 pub fn hira2kata(s: &str) -> String {
-    shift_code(|x| 0x3041 <= x && x <= 0x3096, |x| x + 0x0060, s)
+    shift_code(|x| (0x3041..=0x3096).contains(&x), |x| x + 0x0060, s)
 }
 
 /// Convert Katakana into Hiragana  [ア -> あ]
@@ -266,7 +263,7 @@ pub fn hira2kata(s: &str) -> String {
 /// assert_eq!("いろはぁぃぅゔゕゖ", kana::kata2hira("イロハァィゥヴヵヶ"));
 /// ```
 pub fn kata2hira(s: &str) -> String {
-    shift_code(|x| 0x30A1 <= x && x <= 0x30F6, |x| x - 0x0060, s)
+    shift_code(|x| (0x30A1..=0x30F6).contains(&x), |x| x - 0x0060, s)
 }
 
 macro_rules! push_content {
@@ -359,12 +356,12 @@ fn enspace(s: &str) -> String {
 }
 
 fn replace_marks(vmark: &str, svmark: &str, src: &str) -> String {
-    lazy_static! {
+    lazy_static::lazy_static! {
         static ref RE1: Regex = Regex::new(RE_VOICED_MARKS).unwrap();
         static ref RE2: Regex = Regex::new(RE_SEMIVOICED_MARKS).unwrap();
     }
     let s_ = RE1.replace_all(src, vmark);
-    RE2.replace_all(&s_, svmark)
+    RE2.replace_all(&s_, svmark).into_owned()
 }
 
 /// Convert all separated Voiced-sound-marks into half-width style "\u{FF9E}"
@@ -393,20 +390,20 @@ pub fn vsmark2full(s: &str) -> String {
 /// assert_eq!("ひ ゚ひ ゙んは ゙", kana::vsmark2combi("ひﾟひ゛んは ゙"));
 /// ```
 pub fn vsmark2combi(s: &str) -> String {
-    replace_marks(&VOICED_WITH_SPACE, &SEMIVOICED_WITH_SPACE, s)
+    replace_marks(VOICED_WITH_SPACE, SEMIVOICED_WITH_SPACE, s)
 }
 
 /// Convert Wide-space into normal space    ["　" -> " "]
-pub fn nowidespace(s: &str) -> String { s.replace("\u{3000}", "\u{20}") }
+pub fn nowidespace(s: &str) -> String { s.replace('\u{3000}', "\u{20}") }
 
 /// Convert normal space into Wide-space    [" " -> "　"]
-pub fn space2wide(s: &str) -> String { s.replace("\u{20}", "\u{3000}") }
+pub fn space2wide(s: &str) -> String { s.replace('\u{20}', "\u{3000}") }
 
 /// Convert Wide-yen into Half-width-yen    ["￥" -> "¥"]
-pub fn nowideyen(s: &str) -> String { s.replace("\u{ffe5}", "\u{a5}") }
+pub fn nowideyen(s: &str) -> String { s.replace('\u{ffe5}', "\u{a5}") }
 
 /// Convert Half-width-yen into Wide-yen    ["¥" -> "￥"]
-pub fn yen2wide(s: &str) -> String { s.replace("\u{a5}", "\u{ffe5}") }
+pub fn yen2wide(s: &str) -> String { s.replace('\u{a5}', "\u{ffe5}") }
 
 
 #[cfg(test)]

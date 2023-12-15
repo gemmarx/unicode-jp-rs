@@ -1,61 +1,140 @@
+mod kana;
 
-#[macro_use] extern crate lazy_static;
-#[macro_use] extern crate clap;
-extern crate kana;
-
-use std::error::Error;
-use std::{io, process, fs};
-use std::io::prelude::*;
-use clap::ArgMatches;
+use clap::Parser;
 use kana::*;
+use std::error::Error;
+use std::io::prelude::*;
+use std::{fs, io, process};
 
-macro_rules! err { ($e:expr) => ( {
-    writeln!(&mut io::stderr(), "{}", $e).unwrap();
-    process::exit(1);
-} ) }
+macro_rules! err {
+    ($e:expr) => {{
+        writeln!(&mut io::stderr(), "{}", $e).unwrap();
+        process::exit(1);
+    }};
+}
+
+macro_rules! command {
+    ($($name:ident,)*) => {
+        #[derive(Parser, Debug)]
+        pub struct Command {
+            $(
+                #[arg(long)]
+                $name: bool,
+            )*
+            input: Option<String>,
+        }
+    };
+}
+
+command!(
+    half2full,
+    half2kana,
+    combine,
+    hira2kata,
+    kata2hira,
+    vsmark2half,
+    vsmark2full,
+    vsmark2combi,
+    ascii2wide,
+    wide2ascii,
+    nowidespace,
+    space2wide,
+    nowideyen,
+    yen2wide,
+);
 
 fn main() {
-    let _args = load_yaml!("cli.yml");
-    let args  = clap::App::from_yaml(_args).get_matches();
-
+    let args = Command::parse();
     match main_body(&args, get_input_clap(&args)) {
-        Ok(_)  => {},
+        Ok(_) => {}
         Err(e) => err!(e),
     }
 }
 
-fn main_body(args: &ArgMatches, input: Box<dyn BufRead>)
-    -> Result<(), Box<dyn Error>>
-{
+macro_rules! get_converter_macro {
+    ($args:ident, $($name:ident,)*) => {
+        $(
+            if $args.$name {
+                return $name;
+            }
+        )*
+    };
+}
+
+fn get_converter(args: &Command) -> for<'a> fn(&'a str) -> String {
+    get_converter_macro!(
+        args,
+        half2full,
+        half2kana,
+        combine,
+        hira2kata,
+        kata2hira,
+        vsmark2half,
+        vsmark2full,
+        vsmark2combi,
+        ascii2wide,
+        wide2ascii,
+        nowidespace,
+        space2wide,
+        nowideyen,
+        yen2wide,
+    );
+    panic!();
+}
+
+fn main_body(args: &Command, input: Input) -> Result<(), Box<dyn Error>> {
+    let converter = get_converter(args);
+
     for _s in input.lines() {
-        let mut s = _s?;
-        if args.is_present("half2full")    { s = half2full(&s); }
-        if args.is_present("half2kana")    { s = half2kana(&s); }
-        if args.is_present("combine")      { s = combine(&s); }
-        if args.is_present("hira2kata")    { s = hira2kata(&s); }
-        if args.is_present("kata2hira")    { s = kata2hira(&s); }
-        if args.is_present("vsmark2half")  { s = vsmark2half(&s); }
-        if args.is_present("vsmark2full")  { s = vsmark2full(&s); }
-        if args.is_present("vsmark2combi") { s = vsmark2combi(&s); }
-        if args.is_present("ascii2wide")   { s = ascii2wide(&s); }
-        if args.is_present("wide2ascii")   { s = wide2ascii(&s); }
-        if args.is_present("nowidespace")  { s = nowidespace(&s); }
-        if args.is_present("space2wide")   { s = space2wide(&s); }
-        if args.is_present("nowideyen")    { s = nowideyen(&s); }
-        if args.is_present("yen2wide")     { s = yen2wide(&s); }
-        println!("{}", s);
+        let s = _s?;
+        println!("{}", converter(&converter(&s)));
     }
     Ok(())
 }
 
-fn get_input_clap(args: &ArgMatches) -> Box<dyn BufRead> {
-    if args.is_present("INPUT") {
-        let f = fs::File::open(args.value_of("INPUT").unwrap())
-                .unwrap_or_else(|e|err!(e));
-        Box::new(io::BufReader::new(f)) as Box<dyn BufRead>
+fn get_input_clap(args: &Command) -> Input {
+    if let Some(input) = &&args.input {
+        let f = fs::File::open(input).unwrap_or_else(|e| err!(e));
+        Input::BufReader(io::BufReader::new(f))
     } else {
-        lazy_static! { static ref STDIN: io::Stdin = io::stdin(); }
-        Box::new(STDIN.lock()) as Box<dyn BufRead>
+        let stdin = io::stdin();
+        let lock = stdin.lock();
+        Input::Stdio {
+            stdin,
+            lock,
+        }
     }
 }
 
+pub enum Input {
+    BufReader(io::BufReader<fs::File>),
+    Stdio {
+        stdin: io::Stdin,
+        lock: io::StdinLock<'static>,
+    },
+}
+
+impl Read for Input {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        match self {
+            Self::BufReader(reader) => reader.read(buf),
+            Self::Stdio { stdin, .. } => stdin.read(buf),
+        }
+    }
+}
+
+impl BufRead for Input {
+    fn fill_buf(&mut self) -> io::Result<&[u8]> {
+        match self {
+            Self::BufReader(reader) => reader.fill_buf(),
+            Self::Stdio { lock, .. } => lock.fill_buf(),
+        }
+    }
+
+    fn consume(&mut self, amt: usize) {
+        match self {
+            Self::BufReader(reader) => reader.consume(amt),
+            Self::Stdio { lock, .. } => lock.consume(amt),
+        }
+    }
+}
