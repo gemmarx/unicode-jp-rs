@@ -21,6 +21,6 @@ name = "converchar-jp"
 path = "src/main.rs"
 
 [dependencies]
-regex = "1.10.2"
-clap = { version="4.4.11", features=["derive"] }
+regex = "^1.10.2"
+clap = { version="^4.4.11", features=["derive"] }
 lazy_static = "1.4.0"
