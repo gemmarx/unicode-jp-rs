@@ -1,11 +1,11 @@
 [package]
 name = "g2-unicode-jp"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2021"
 authors = ["gemmarx <gemmarx@users.noreply.github.com>", "G2 <ke0bhogsg@gmail.com>"]
 
 description = "A library to convert Japanese Half-width-kana[半角ｶﾅ] and Wide-alphanumeric[全角英数] into normal ones."
-repository = "https://github.com/gemmarx/unicode-jp-rs"
+repository = "https://github.com/G2-Games/unicode-jp-rs"
 license = "MIT"
 readme = "readme.md"
 keywords = ["unicode", "japanese", "hankaku", "zenkaku", "kana"]

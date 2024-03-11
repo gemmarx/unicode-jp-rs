@@ -1,3 +1,7 @@
+Temporary Crate
+____
+This crate exists due to https://github.com/gemmarx/unicode-jp-rs appearing inactive, and updates needed. Please contact me and I will yank my versions from crates.io if needed.
+
 Unicode-JP (Rust)
 ----
 [![Build Status](https://travis-ci.org/gemmarx/unicode-jp-rs.svg?branch=master)](https://travis-ci.org/gemmarx/unicode-jp-rs)
