@@ -1,3 +1,5 @@
 target
 share
 doc
+
+Cargo.lock
